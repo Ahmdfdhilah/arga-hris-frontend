@@ -7,15 +7,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '../ui/dialog';
+} from '@/components/ui/dialog';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from '../ui/card';
-import { Button } from '../ui/button';
-import { Separator } from '../ui/separator';
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import {
   formatAttendanceTime,
   formatAttendanceDate,

@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
 import { RotateCcw, Archive, MoreVertical, Eye, Building2, User, Layers } from 'lucide-react';
-import { Button } from '../ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Empty,
   EmptyContent,
   EmptyDescription,
   EmptyHeader,
   EmptyTitle,
-} from '../ui/empty';
+} from '@/components/ui/empty';
 import { Spinner } from '@/components/common';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '../ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu';
 import { PageHeader } from '@/components/common/Header';
 import { Filtering } from '@/components/common/Filtering';
 import { Pagination } from '@/components/common';
@@ -29,7 +29,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '../ui/table';
+} from '@/components/ui/table';
 import { useURLFilters } from '@/hooks/useURLFilters';
 import {
   useDeletedOrgUnits,
