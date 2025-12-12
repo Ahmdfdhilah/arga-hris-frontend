@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@workspace/ui/components/button';
+import { Button } from '../ui/button';
 import { Home, ArrowLeft } from 'lucide-react';
 
 const NotFound: React.FC = () => {

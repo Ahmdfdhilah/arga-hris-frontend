@@ -50,7 +50,6 @@ const EmployeeFormFields: React.FC<EmployeeFormFieldsProps> = ({
 }) => {
   const orgUnitSearch = useOrgUnitSearch();
 
-  // Load initial value for org_unit_id when in edit mode
   useEffect(() => {
     if (formData.org_unit_id && orgUnitSearch.loadInitialValue) {
       orgUnitSearch.loadInitialValue(formData.org_unit_id);

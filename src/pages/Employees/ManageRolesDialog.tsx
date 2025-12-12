@@ -7,15 +7,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@workspace/ui/components/dialog';
+} from '../ui/dialog';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from '@workspace/ui/components/card';
-import { Button } from '@workspace/ui/components/button';
-import { Separator } from '@workspace/ui/components/separator';
+} from '../ui/card';
+import { Button } from '../ui/button';
+import { Separator } from '../ui/separator';
 import { Spinner } from '@/components/common';
 import {
   Select,
@@ -23,7 +23,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@workspace/ui/components/select';
+} from '../ui/select';
 import { useAllRoles, useUserRolesPermissions, useAssignRole, useRemoveRole } from '@/hooks/tanstackHooks/useUsers';
 import type { EmployeeWithAccount } from '@/services/employees/types';
 

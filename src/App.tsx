@@ -5,7 +5,7 @@ import {  QueryClientProvider } from '@tanstack/react-query';
 import { store, persistor } from '@/redux/store';
 import AppRoutes from '@/routes/AppRoutes';
 import AuthProvider from '@/providers/auth';
-import { TooltipProvider } from '@workspace/ui/components/tooltip';
+import { TooltipProvider } from '../ui/tooltip';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import { queryClient } from './providers/tanstack';
 import { Toaster } from 'sonner';

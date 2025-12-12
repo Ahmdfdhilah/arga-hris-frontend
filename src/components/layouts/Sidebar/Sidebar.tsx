@@ -5,7 +5,7 @@ import { logout, clearAuth } from '@/redux/features/authSlice';
 import { persistor } from '@/redux/store';
 import { SSO_DASHBOARD_URL } from '@/config';
 import { cn } from '@workspace/ui/lib/utils';
-import { Sheet, SheetContent } from '@workspace/ui/components/sheet';
+import { Sheet, SheetContent } from '../ui/sheet';
 import { MenuItem, hrisMenus } from '@/lib/menus';
 import { canAccessMenu, getUserInitials, truncateEmail } from '@/services/users/utils';
 import SidebarToggle from './SidebarToggle';

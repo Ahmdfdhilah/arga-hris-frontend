@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
-import { Button } from '@workspace/ui/components/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import {
   Empty,
   EmptyContent,
   EmptyDescription,
   EmptyHeader,
   EmptyTitle,
-} from '@workspace/ui/components/empty';
-import { ItemGroup } from '@workspace/ui/components/item';
-import { Spinner } from '@workspace/ui/components/spinner';
+} from '../ui/empty';
+import { ItemGroup } from '../ui/item';
+import { Spinner } from '@/components/common';
 import { PageHeader } from '@/components/common/Header';
 import { Filtering } from '@/components/common/Filtering';
 import { useAppSelector } from '@/redux/hooks';
@@ -31,20 +31,20 @@ import {
   Field,
   FieldContent,
   FieldLabel,
-} from '@workspace/ui/components/field';
+} from '../ui/field';
 import {
   InputGroup,
   InputGroupAddon,
-} from '@workspace/ui/components/input-group';
+} from '../ui/input-group';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@workspace/ui/components/select';
+} from '../ui/select';
 import { Building2, Layers } from 'lucide-react';
-import { Combobox } from '@workspace/ui/components/combobox';
+import { Combobox } from '../ui/combobox';
 import { Pagination } from '@/components/common';
 
 const OrgUnitList: React.FC = () => {

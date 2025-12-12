@@ -5,9 +5,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@workspace/ui/components/dialog';
-import { Button } from '@workspace/ui/components/button';
-import { Spinner } from '@workspace/ui/components/spinner';
+} from '../ui/dialog';
+import { Button } from '../ui/button';
+import { Spinner } from '@/components/common';
 import React from 'react';
 
 interface FormDialogProps {

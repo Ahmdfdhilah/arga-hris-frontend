@@ -6,14 +6,14 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@workspace/ui/components/dialog';
+} from '../ui/dialog';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from '@workspace/ui/components/card';
-import { Separator } from '@workspace/ui/components/separator';
+} from '../ui/card';
+import { Separator } from '../ui/separator';
 import {
   formatAttendanceTime,
   formatAttendanceDate,

@@ -5,8 +5,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@workspace/ui/components/dialog';
-import { Button } from '@workspace/ui/components/button';
+} from '../ui/dialog';
+import { Button } from '../ui/button';
 import { AlertTriangle, CheckCircle, XCircle, Trash2, AlertCircle } from 'lucide-react';
 import React from 'react';
 

@@ -1,13 +1,13 @@
 import { LogOut, ChevronsUpDown } from 'lucide-react';
-import { Button } from '@workspace/ui/components/button';
+import { Button } from '../ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@workspace/ui/components/dropdown-menu';
-import { Avatar, AvatarFallback } from '@workspace/ui/components/avatar';
-import { Separator } from '@workspace/ui/components/separator';
+} from '../ui/dropdown-menu';
+import { Avatar, AvatarFallback } from '../ui/avatar';
+import { Separator } from '../ui/separator';
 import { cn } from '@workspace/ui/lib/utils';
 import type { CurrentUser } from '@/redux/features/authSlice';
 

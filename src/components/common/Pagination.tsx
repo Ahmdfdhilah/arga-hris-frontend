@@ -1,13 +1,13 @@
 import React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@workspace/ui/components/button";
+import { Button } from "../ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@workspace/ui/components/select";
+} from "../ui/select";
 
 interface PaginationProps {
   currentPage: number;
