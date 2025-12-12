@@ -15,7 +15,7 @@ import {
   Spinner,
   PageHeader,
   Filtering,
-  Pagination ,
+  Pagination,
   ConfirmDialog,
   Field,
   FieldContent,
@@ -52,7 +52,6 @@ import EmployeeCardView from './EmployeeCardView';
 import EmployeeFormDialog from './EmployeeFormDialog';
 import { EmployeeDetailDialog } from './EmployeeDetailDialog';
 import { ManageRolesDialog } from './ManageRolesDialog';
-import { GuestPasswordModal } from './GuestPasswordModal';
 
 const EmployeeList: React.FC = () => {
   const { isDesktop } = useResponsive();
@@ -66,12 +65,7 @@ const EmployeeList: React.FC = () => {
   const [employeeToView, setEmployeeToView] = useState<EmployeeWithAccount | null>(null);
   const [manageRolesDialogOpen, setManageRolesDialogOpen] = useState(false);
   const [employeeToManageRoles, setEmployeeToManageRoles] = useState<EmployeeWithAccount | null>(null);
-  const [guestPasswordModalOpen, setGuestPasswordModalOpen] = useState(false);
-  const [guestPasswordData, setGuestPasswordData] = useState<{
-    email: string;
-    name: string;
-    password: string;
-  } | null>(null);
+
 
   const urlFiltersHook = useURLFilters<PaginationParams & EmployeeWithAccountFilterParams>({
     defaults: {
@@ -80,7 +74,6 @@ const EmployeeList: React.FC = () => {
       search: '',
       is_active: undefined,
       org_unit_id: undefined,
-      account_type: undefined,
     },
   });
 
@@ -136,8 +129,9 @@ const EmployeeList: React.FC = () => {
   };
 
   const handleActivate = (employeeWithAccount: EmployeeWithAccount) => {
-    // Activate employee and account in one operation
-    activateEmployeeAccountMutation.mutate(employeeWithAccount.user.id);
+    const userId = employeeWithAccount.user?.id;
+    if (!userId) return;
+    activateEmployeeAccountMutation.mutate(userId);
   };
 
   const handleManageRoles = (employeeWithAccount: EmployeeWithAccount) => {
@@ -152,8 +146,10 @@ const EmployeeList: React.FC = () => {
 
   const confirmDelete = () => {
     if (!employeeToDelete) return;
+    const userId = employeeToDelete.user?.id;
+    if (!userId) return;
 
-    softDeleteEmployeeAccountMutation.mutate(employeeToDelete.user.id, {
+    softDeleteEmployeeAccountMutation.mutate(userId, {
       onSuccess: () => {
         setConfirmDeleteOpen(false);
         setEmployeeToDelete(null);
@@ -163,9 +159,11 @@ const EmployeeList: React.FC = () => {
 
   const confirmDeactivate = () => {
     if (!employeeToDeactivate) return;
+    const userId = employeeToDeactivate.user?.id;
+    if (!userId) return;
 
     // Deactivate employee and account in one operation
-    deactivateEmployeeAccountMutation.mutate(employeeToDeactivate.user.id, {
+    deactivateEmployeeAccountMutation.mutate(userId, {
       onSuccess: () => {
         setConfirmOpen(false);
         setEmployeeToDeactivate(null);
@@ -186,16 +184,13 @@ const EmployeeList: React.FC = () => {
         employee_type: formData.employee_type,
         employee_gender: formData.employee_gender,
         supervisor_id: formData.supervisor_id,
-        // Guest-only fields (if applicable)
-        valid_from: formData.valid_from,
-        valid_until: formData.valid_until,
-        guest_type: formData.guest_type,
-        notes: formData.notes,
-        sponsor_id: formData.sponsor_id,
       };
 
+      const userId = selectedEmployeeWithAccount.user?.id;
+      if (!userId) return;
+
       updateEmployeeWithAccountMutation.mutate(
-        { userId: selectedEmployeeWithAccount.user.id, data: updateData },
+        { userId: userId, data: updateData },
         {
           onSuccess: () => {
             setFormOpen(false);
@@ -216,28 +211,12 @@ const EmployeeList: React.FC = () => {
         employee_type: formData.employee_type,
         employee_gender: formData.employee_gender,
         supervisor_id: formData.supervisor_id,
-        account_type: formData.account_type || 'user',
-  
-        guest_type: formData.guest_type,
-        valid_from: formData.valid_from,
-        valid_until: formData.valid_until,
-        sponsor_id: formData.sponsor_id,
-        notes: formData.notes,
       };
 
       createEmployeeWithAccountMutation.mutate(createData, {
-        onSuccess: (response) => {
+        onSuccess: () => {
           setFormOpen(false);
-
-          // Show temporary password modal for guest accounts
-          if (response.data.temporary_password) {
-            setGuestPasswordData({
-              email: formData.email,
-              name: `${formData.first_name} ${formData.last_name}`,
-              password: response.data.temporary_password,
-            });
-            setGuestPasswordModalOpen(true);
-          }
+          // Note: temporary password is shown by the backend as toast/notification
         },
       });
     }
@@ -373,7 +352,7 @@ const EmployeeList: React.FC = () => {
             </Empty>
           )}
 
-          {!isLoading && !isError && data && data.data.length == 0  && (
+          {!isLoading && !isError && data && data.data.length == 0 && (
             <Empty>
               <EmptyHeader>
                 <EmptyTitle>
@@ -416,7 +395,7 @@ const EmployeeList: React.FC = () => {
                 <ItemGroup>
                   {data.data.map((employeeWithAccount) => (
                     <EmployeeCardView
-                      key={employeeWithAccount.user.id}
+                      key={employeeWithAccount.employee?.id || employeeWithAccount.user?.id}
                       employee={employeeWithAccount}
                       onView={handleView}
                       onEdit={handleEdit}
@@ -464,19 +443,11 @@ const EmployeeList: React.FC = () => {
         employee={employeeToManageRoles}
       />
 
-      <GuestPasswordModal
-        open={guestPasswordModalOpen}
-        onOpenChange={setGuestPasswordModalOpen}
-        guestEmail={guestPasswordData?.email || ''}
-        guestName={guestPasswordData?.name || ''}
-        temporaryPassword={guestPasswordData?.password || ''}
-      />
-
       <ConfirmDialog
         isOpen={confirmOpen}
         onClose={() => setConfirmOpen(false)}
         title="Nonaktifkan Karyawan?"
-        description={`Apakah Anda yakin ingin menonaktifkan karyawan "${employeeToDeactivate?.employee?.name || employeeToDeactivate?.user.first_name + ' ' + employeeToDeactivate?.user.last_name}"? Karyawan yang dinonaktifkan tidak akan bisa login ke sistem.`}
+        description={`Apakah Anda yakin ingin menonaktifkan karyawan "${employeeToDeactivate?.employee?.name || 'ini'}"? Karyawan yang dinonaktifkan tidak akan bisa login ke sistem.`}
         variant="danger"
         onConfirm={confirmDeactivate}
         isProcessing={deactivateEmployeeAccountMutation.isPending}
@@ -491,7 +462,7 @@ const EmployeeList: React.FC = () => {
           setEmployeeToDelete(null);
         }}
         title="Hapus Karyawan?"
-        description={`Apakah Anda yakin ingin menghapus karyawan "${employeeToDelete?.employee?.name || employeeToDelete?.user.first_name + ' ' + employeeToDelete?.user.last_name}"? Data yang dihapus dapat dipulihkan kembali dari menu Karyawan Terhapus.`}
+        description={`Apakah Anda yakin ingin menghapus karyawan "${employeeToDelete?.employee?.name || 'ini'}"? Data yang dihapus dapat dipulihkan kembali dari menu Karyawan Terhapus.`}
         variant="danger"
         onConfirm={confirmDelete}
         isProcessing={softDeleteEmployeeAccountMutation.isPending}

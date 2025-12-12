@@ -248,7 +248,6 @@ export {
 // Custom Components
 export { Spinner } from '../ui/spinner';
 export { Combobox } from '../ui/combobox';
-export type { ComboboxOption, ComboboxProps } from '../ui/combobox';
 export {
   Field,
   FieldGroup,

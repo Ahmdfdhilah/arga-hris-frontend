@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { RotateCcw, Archive, MoreVertical, Eye, Mail, Building2, Users } from 'lucide-react';
+import { RotateCcw, Archive, MoreVertical, Eye, Mail, Building2 } from 'lucide-react';
 import {
   Button,
   Card,
@@ -22,7 +22,6 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  Badge,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -81,7 +80,7 @@ const ArchivedEmployeeList: React.FC = () => {
   };
 
   const confirmRestore = () => {
-    if (!employeeToRestore) return;
+    if (!employeeToRestore || !employeeToRestore.user) return;
 
     restoreEmployeeAccountMutation.mutate(employeeToRestore.user.id, {
       onSuccess: () => {
@@ -165,83 +164,74 @@ const ArchivedEmployeeList: React.FC = () => {
                       <TableHead>Nama</TableHead>
                       <TableHead>Email</TableHead>
                       <TableHead>Unit Organisasi</TableHead>
-                      <TableHead className="text-center">Tipe Akun</TableHead>
                       <TableHead>Tanggal Hapus</TableHead>
                       <TableHead className="w-[70px]"></TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {data.data.map((item) => (
-                      <TableRow key={item.user.id}>
-                        <TableCell className="font-medium">
-                          {item.employee?.employee_number || '-'}
-                        </TableCell>
+                    {data.data.map((item) => {
+                      const displayName = item.employee?.name || 'Unknown';
+                      const displayEmail = item.employee?.email || '-';
 
-                        <TableCell className="font-medium">
-                          {item.employee?.name || `${item.user.first_name} ${item.user.last_name}`}
-                        </TableCell>
+                      return (
+                        <TableRow key={item.employee?.id || item.user?.id}>
+                          <TableCell className="font-medium">
+                            {item.employee?.employee_number || '-'}
+                          </TableCell>
 
-                        <TableCell>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Mail className="h-3.5 w-3.5" />
-                            <span>{item.user.email}</span>
-                          </div>
-                        </TableCell>
+                          <TableCell className="font-medium">
+                            {displayName}
+                          </TableCell>
 
-                        <TableCell>
-                          {item.employee?.org_unit && (
+                          <TableCell>
                             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <Building2 className="h-3.5 w-3.5" />
-                              <span>{item.employee.org_unit.name}</span>
+                              <Mail className="h-3.5 w-3.5" />
+                              <span>{displayEmail}</span>
                             </div>
-                          )}
-                        </TableCell>
+                          </TableCell>
 
-                        <TableCell className="text-center">
-                          <Badge variant={item.user.account_type === 'guest' ? 'secondary' : 'default'} className="text-xs">
-                            {item.user.account_type === 'guest' ? (
-                              <div className="flex items-center gap-1">
-                                <Users className="h-3 w-3" />
-                                <span>Guest</span>
+                          <TableCell>
+                            {item.employee?.org_unit && (
+                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                <Building2 className="h-3.5 w-3.5" />
+                                <span>{item.employee.org_unit.name}</span>
                               </div>
-                            ) : (
-                              'Regular'
                             )}
-                          </Badge>
-                        </TableCell>
+                          </TableCell>
 
-                        <TableCell>
-                          <span className="text-sm text-muted-foreground">
-                            {item.employee?.deleted_at
-                              ? formatDate(item.employee.deleted_at)
-                              : '-'}
-                          </span>
-                        </TableCell>
+                          <TableCell>
+                            <span className="text-sm text-muted-foreground">
+                              {item.employee?.deleted_at
+                                ? formatDate(item.employee.deleted_at)
+                                : '-'}
+                            </span>
+                          </TableCell>
 
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-8 w-8">
-                                <MoreVertical className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => handleView(item)}>
-                                <Eye className="mr-2 h-4 w-4" />
-                                Lihat Detail
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => handleRestore(item)}
-                                disabled={restoreEmployeeAccountMutation.isPending}
-                              >
-                                <RotateCcw className="mr-2 h-4 w-4" />
-                                Pulihkan
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8">
+                                  <MoreVertical className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => handleView(item)}>
+                                  <Eye className="mr-2 h-4 w-4" />
+                                  Lihat Detail
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => handleRestore(item)}
+                                  disabled={restoreEmployeeAccountMutation.isPending}
+                                >
+                                  <RotateCcw className="mr-2 h-4 w-4" />
+                                  Pulihkan
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </div>
@@ -282,7 +272,7 @@ const ArchivedEmployeeList: React.FC = () => {
         }}
         onConfirm={confirmRestore}
         title="Pulihkan Karyawan"
-        description={`Apakah Anda yakin ingin memulihkan karyawan ${employeeToRestore?.employee?.name || `${employeeToRestore?.user.first_name} ${employeeToRestore?.user.last_name}`}? Karyawan akan diaktifkan kembali.`}
+        description={`Apakah Anda yakin ingin memulihkan karyawan ${employeeToRestore?.employee?.name || 'ini'}? Karyawan akan diaktifkan kembali.`}
         confirmText="Pulihkan"
         cancelText="Batal"
         isProcessing={restoreEmployeeAccountMutation.isPending}

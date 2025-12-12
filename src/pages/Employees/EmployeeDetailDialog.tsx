@@ -1,5 +1,5 @@
 import React from 'react';
-import { User, Mail, Phone, Briefcase, Building2, UserCheck, Calendar, Users, Key, Clock } from 'lucide-react';
+import { User, Mail, Phone, Briefcase, Building2, UserCheck, Calendar } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -7,7 +7,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '../ui/dialog';
+} from '@/components/ui/dialog';
 import {
   Card,
   CardContent,
@@ -16,7 +16,6 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/common';
 import type { EmployeeWithAccount } from '@/services/employees/types';
 
 interface EmployeeDetailDialogProps {
@@ -32,13 +31,14 @@ export const EmployeeDetailDialog: React.FC<EmployeeDetailDialogProps> = ({
 }) => {
   if (!employeeWithAccount) return null;
 
-  const { employee, user, guest_account } = employeeWithAccount;
-  const displayName = employee?.name || `${user.first_name} ${user.last_name}`;
-  const isActive = user.is_active && (employee?.is_active ?? true);
+  const { employee, user } = employeeWithAccount;
+  const displayName = employee?.name || 'Unknown';
+  const displayEmail = employee?.email || '-';
+  const isActive = (user?.is_active ?? true) && (employee?.is_active ?? true);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent 
+      <DialogContent
         className="flex max-h-[90vh] w-[95%] flex-col sm:max-w-5xl"
         style={{ maxWidth: '80rem' }}
       >
@@ -76,7 +76,7 @@ export const EmployeeDetailDialog: React.FC<EmployeeDetailDialogProps> = ({
                         <Mail className="h-3 w-3" />
                         Email
                       </div>
-                      <div className="text-sm">{user.email}</div>
+                      <div className="text-sm">{displayEmail}</div>
                     </div>
 
                     {employee?.phone && (
@@ -95,31 +95,13 @@ export const EmployeeDetailDialog: React.FC<EmployeeDetailDialogProps> = ({
                         Status
                       </div>
                       <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          isActive
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${isActive
                             ? 'bg-primary/10 text-primary'
                             : 'bg-muted text-muted-foreground'
-                        }`}
+                          }`}
                       >
                         {isActive ? 'Aktif' : 'Tidak Aktif'}
                       </span>
-                    </div>
-
-                    <div>
-                      <div className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
-                        <Key className="h-3 w-3" />
-                        Tipe Akun
-                      </div>
-                      <Badge variant={user.account_type === 'guest' ? 'secondary' : 'default'}>
-                        {user.account_type === 'guest' ? (
-                          <div className="flex items-center gap-1">
-                            <Users className="h-3 w-3" />
-                            <span>Guest</span>
-                          </div>
-                        ) : (
-                          'Regular User'
-                        )}
-                      </Badge>
                     </div>
                   </div>
                 </CardContent>
@@ -185,62 +167,6 @@ export const EmployeeDetailDialog: React.FC<EmployeeDetailDialogProps> = ({
                 </CardContent>
               </Card>
             </div>
-
-            {guest_account && (
-              <>
-                <Separator />
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-base flex items-center gap-2">
-                      <Users className="h-4 w-4" />
-                      Informasi Guest Account
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid gap-4 lg:grid-cols-2">
-                      <div>
-                        <div className="text-xs text-muted-foreground mb-1">Tipe Guest</div>
-                        <div className="text-sm font-medium">{guest_account.guest_type}</div>
-                      </div>
-
-                      {guest_account.valid_from && (
-                        <div>
-                          <div className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            Valid Dari
-                          </div>
-                          <div className="text-sm">{new Date(guest_account.valid_from).toLocaleDateString('id-ID')}</div>
-                        </div>
-                      )}
-
-                      {guest_account.valid_until && (
-                        <div>
-                          <div className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            Valid Sampai
-                          </div>
-                          <div className="text-sm">{new Date(guest_account.valid_until).toLocaleDateString('id-ID')}</div>
-                        </div>
-                      )}
-
-                      {guest_account.sponsor_id && (
-                        <div>
-                          <div className="text-xs text-muted-foreground mb-1">Sponsor ID</div>
-                          <div className="text-sm">{guest_account.sponsor_id}</div>
-                        </div>
-                      )}
-
-                      {guest_account.notes && (
-                        <div className="lg:col-span-2">
-                          <div className="text-xs text-muted-foreground mb-1">Catatan</div>
-                          <div className="text-sm">{guest_account.notes}</div>
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              </>
-            )}
 
             <Separator />
 

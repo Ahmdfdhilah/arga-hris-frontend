@@ -7,15 +7,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '../ui/dialog';
+} from '@/components/ui/dialog';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from '../ui/card';
-import { Button } from '../ui/button';
-import { Separator } from '../ui/separator';
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/common';
 import {
   Select,
@@ -23,7 +23,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select';
+} from '@/components/ui/select';
 import { useAllRoles, useUserRolesPermissions, useAssignRole, useRemoveRole } from '@/hooks/tanstackHooks/useUsers';
 import type { EmployeeWithAccount } from '@/services/employees/types';
 
@@ -45,9 +45,8 @@ export const ManageRolesDialog: React.FC<ManageRolesDialogProps> = ({
   const { data: allRolesData, isLoading: isLoadingAllRoles } = useAllRoles();
 
   // Fetch user's current roles and permissions
-  const { data: userRolesData, isLoading: isLoadingUserRoles } = useUserRolesPermissions(
-    employeeWithAccount?.user.id || null
-  );
+  const userId = employeeWithAccount?.user?.id || null;
+  const { data: userRolesData, isLoading: isLoadingUserRoles } = useUserRolesPermissions(userId);
 
   // Mutations
   const assignRoleMutation = useAssignRole();
@@ -64,11 +63,11 @@ export const ManageRolesDialog: React.FC<ManageRolesDialogProps> = ({
   }, [allRolesData, userRolesData]);
 
   const handleAssignRole = () => {
-    if (!selectedRole || !employeeWithAccount?.user.id) return;
+    if (!selectedRole || !userId) return;
 
     assignRoleMutation.mutate(
       {
-        userId: employeeWithAccount.user.id,
+        userId: userId,
         data: { role_name: selectedRole },
       },
       {
@@ -80,10 +79,10 @@ export const ManageRolesDialog: React.FC<ManageRolesDialogProps> = ({
   };
 
   const handleRemoveRole = (roleName: string) => {
-    if (!employeeWithAccount?.user.id) return;
+    if (!userId) return;
 
     removeRoleMutation.mutate({
-      userId: employeeWithAccount.user.id,
+      userId: userId,
       data: { role_name: roleName },
     });
   };
@@ -93,8 +92,9 @@ export const ManageRolesDialog: React.FC<ManageRolesDialogProps> = ({
 
   if (!employeeWithAccount) return null;
 
-  const { employee, user } = employeeWithAccount;
-  const displayName = employee?.name || `${user.first_name} ${user.last_name}`;
+  const { employee } = employeeWithAccount;
+  const displayName = employee?.name || 'Unknown';
+  const displayEmail = employee?.email || '-';
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -108,7 +108,7 @@ export const ManageRolesDialog: React.FC<ManageRolesDialogProps> = ({
             Kelola Peran Pengguna
           </DialogTitle>
           <DialogDescription>
-            Kelola peran untuk {displayName} ({user.email})
+            Kelola peran untuk {displayName} ({displayEmail})
           </DialogDescription>
         </DialogHeader>
 

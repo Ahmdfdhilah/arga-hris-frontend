@@ -13,9 +13,8 @@ import {
   Button,
   Avatar,
   AvatarFallback,
-  Badge,
 } from '@/components/common';
-import { Mail, MoreVertical, Edit, UserX, UserCheck, Building2, Briefcase, Eye, Shield, Users, UserCog, Trash2 } from 'lucide-react';
+import { Mail, MoreVertical, Edit, UserX, UserCheck, Building2, Briefcase, Eye, Shield, UserCog, Trash2 } from 'lucide-react';
 import type { EmployeeWithAccount } from '@/services/employees/types';
 import { EMPLOYEE_TYPE_OPTIONS } from '@/services/employees/types/shared';
 
@@ -29,8 +28,12 @@ interface EmployeeCardViewProps {
   onManageRoles?: (employeeWithAccount: EmployeeWithAccount) => void;
 }
 
-const getInitials = (firstName: string, lastName: string): string => {
-  return `${firstName[0]}${lastName[0]}`.toUpperCase();
+const getInitials = (name: string): string => {
+  const parts = name.split(' ');
+  if (parts.length >= 2) {
+    return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+  }
+  return name.substring(0, 2).toUpperCase();
 };
 
 const getEmployeeTypeLabel = (employeeType: string | null | undefined): string => {
@@ -49,15 +52,16 @@ const EmployeeCardView: React.FC<EmployeeCardViewProps> = ({
   onManageRoles,
 }) => {
   const { employee, user } = employeeWithAccount;
-  const displayName = employee?.name || `${user.first_name} ${user.last_name}`;
-  const isActive = user.is_active && (employee?.is_active ?? true);
+  const displayName = employee?.name || 'Unknown';
+  const displayEmail = employee?.email || '-';
+  const isActive = (user?.is_active ?? true) && (employee?.is_active ?? true);
 
   return (
     <Item variant="outline" className="mt-3">
       <ItemMedia className="hidden sm:flex shrink-0">
         <Avatar>
           <AvatarFallback className="bg-primary/10 text-primary">
-            {getInitials(user.first_name, user.last_name)}
+            {getInitials(displayName)}
           </AvatarFallback>
         </Avatar>
       </ItemMedia>
@@ -66,9 +70,8 @@ const EmployeeCardView: React.FC<EmployeeCardViewProps> = ({
         <div className="flex items-center gap-2 flex-wrap">
           <ItemTitle className="truncate">{displayName}</ItemTitle>
           <span
-            className={`h-2 w-2 rounded-full shrink-0 ${
-              isActive ? 'bg-primary' : 'bg-muted-foreground/50'
-            }`}
+            className={`h-2 w-2 rounded-full shrink-0 ${isActive ? 'bg-primary' : 'bg-muted-foreground/50'
+              }`}
           />
         </div>
 
@@ -76,22 +79,12 @@ const EmployeeCardView: React.FC<EmployeeCardViewProps> = ({
           <div className="text-xs text-muted-foreground">
             {employee?.employee_number || '-'}
           </div>
-          <Badge variant={user.account_type === 'guest' ? 'secondary' : 'default'} className="text-xs shrink-0">
-            {user.account_type === 'guest' ? (
-              <div className="flex items-center gap-1">
-                <Users className="h-3 w-3" />
-                <span>Guest</span>
-              </div>
-            ) : (
-              'Regular'
-            )}
-          </Badge>
         </div>
 
         <ItemDescription className="space-y-0.5">
           <div className="flex items-start gap-2 text-sm">
             <Mail className="h-3.5 w-3.5 shrink-0 mt-0.5" />
-            <span className="break-words flex-1 min-w-0">{user.email}</span>
+            <span className="break-words flex-1 min-w-0">{displayEmail}</span>
           </div>
           {employee?.position && (
             <div className="flex items-start gap-2 text-sm">

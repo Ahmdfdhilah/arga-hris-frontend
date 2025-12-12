@@ -12,9 +12,8 @@ import {
   Button,
   Avatar,
   AvatarFallback,
-  Badge,
 } from '@/components/common';
-import { Mail, MoreVertical, Edit, UserX, UserCheck, Building2, Eye, Shield, Users, Briefcase, Trash2 } from 'lucide-react';
+import { Mail, MoreVertical, Edit, UserX, UserCheck, Building2, Eye, Shield, Briefcase, Trash2 } from 'lucide-react';
 import type { EmployeeWithAccount } from '@/services/employees/types';
 import { EMPLOYEE_TYPE_OPTIONS } from '@/services/employees/types/shared';
 
@@ -28,8 +27,12 @@ interface EmployeeTableViewProps {
   onManageRoles?: (employeeWithAccount: EmployeeWithAccount) => void;
 }
 
-const getInitials = (firstName: string, lastName: string): string => {
-  return `${firstName[0]}${lastName[0]}`.toUpperCase();
+const getInitials = (name: string): string => {
+  const parts = name.split(' ');
+  if (parts.length >= 2) {
+    return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+  }
+  return name.substring(0, 2).toUpperCase();
 };
 
 const getEmployeeTypeLabel = (employeeType: string | null | undefined): string => {
@@ -58,7 +61,6 @@ const EmployeeTableView: React.FC<EmployeeTableViewProps> = ({
             <TableHead>Email</TableHead>
             <TableHead>Unit Organisasi</TableHead>
             <TableHead>Tipe Karyawan</TableHead>
-            <TableHead className="text-center">Tipe Akun</TableHead>
             <TableHead className="text-center">Status</TableHead>
             <TableHead className="w-[70px]"></TableHead>
           </TableRow>
@@ -66,15 +68,16 @@ const EmployeeTableView: React.FC<EmployeeTableViewProps> = ({
         <TableBody>
           {employees.map((employeeWithAccount) => {
             const { employee, user } = employeeWithAccount;
-            const displayName = employee?.name || `${user.first_name} ${user.last_name}`;
-            const isActive = user.is_active && (employee?.is_active ?? true);
+            const displayName = employee?.name || 'Unknown';
+            const displayEmail = employee?.email || '-';
+            const isActive = (user?.is_active ?? true) && (employee?.is_active ?? true);
 
             return (
-              <TableRow key={user.id}>
+              <TableRow key={employee?.id || user?.id}>
                 <TableCell>
                   <Avatar className="h-9 w-9">
                     <AvatarFallback className="bg-primary/10 text-primary">
-                      {getInitials(user.first_name, user.last_name)}
+                      {getInitials(displayName)}
                     </AvatarFallback>
                   </Avatar>
                 </TableCell>
@@ -90,7 +93,7 @@ const EmployeeTableView: React.FC<EmployeeTableViewProps> = ({
                 <TableCell>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Mail className="h-3.5 w-3.5" />
-                    <span>{user.email}</span>
+                    <span>{displayEmail}</span>
                   </div>
                 </TableCell>
 
@@ -113,24 +116,10 @@ const EmployeeTableView: React.FC<EmployeeTableViewProps> = ({
                 </TableCell>
 
                 <TableCell className="text-center">
-                  <Badge variant={user.account_type === 'guest' ? 'secondary' : 'default'} className="text-xs">
-                    {user.account_type === 'guest' ? (
-                      <div className="flex items-center gap-1">
-                        <Users className="h-3 w-3" />
-                        <span>Guest</span>
-                      </div>
-                    ) : (
-                      'Regular'
-                    )}
-                  </Badge>
-                </TableCell>
-
-                <TableCell className="text-center">
-                  <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                    isActive
+                  <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${isActive
                       ? 'bg-primary/10 text-primary'
                       : 'bg-muted text-muted-foreground'
-                  }`}>
+                    }`}>
                     {isActive ? 'Aktif' : 'Tidak Aktif'}
                   </span>
                 </TableCell>

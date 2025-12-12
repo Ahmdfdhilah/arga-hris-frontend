@@ -3,19 +3,19 @@ import { FormDialog } from '@/components/common/FormDialog';
 import EmployeeFormFields from './EmployeeFormFields';
 import type { EmployeeWithAccount, CreateEmployeeWithAccountRequest, UpdateEmployeeWithAccountRequest } from '@/services/employees/types';
 import { validateEmployeeEmail, validateEmployeePhone, validateEmployeeNumber } from '@/services/employees/utils';
-import { toHTMLDateString } from '@/utils/date';
 
 
 interface EmployeeFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   employee?: EmployeeWithAccount | null;
-  onSubmit: (data: any) => void;
+  onSubmit: (data: CreateEmployeeWithAccountRequest | UpdateEmployeeWithAccountRequest) => void;
   isSubmitting: boolean;
 }
 
 type EmployeeFormData = Partial<CreateEmployeeWithAccountRequest> & Partial<UpdateEmployeeWithAccountRequest> & {
   is_active?: boolean;
+  email?: string;
 };
 
 const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({
@@ -32,30 +32,29 @@ const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({
   useEffect(() => {
     if (open) {
       if (employeeWithAccount) {
-        const { employee, user, guest_account } = employeeWithAccount;
+        const { employee } = employeeWithAccount;
+
+        // Split name into first_name and last_name
+        const nameParts = (employee?.name || '').split(' ');
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts.slice(1).join(' ') || '';
 
         setFormData({
           number: employee?.employee_number || '',
-          first_name: user.first_name,
-          last_name: user.last_name,
-          email: user.email,
+          first_name: firstName,
+          last_name: lastName,
+          email: employee?.email || '',
           phone: employee?.phone || '',
           position: employee?.position || '',
           employee_type: employee?.employee_type || undefined,
           employee_gender: employee?.employee_gender || undefined,
           org_unit_id: employee?.org_unit_id || undefined,
           supervisor_id: employee?.supervisor_id || undefined,
-          is_active: user.is_active,
-          // Guest fields (if applicable)
-          guest_type: guest_account?.guest_type || undefined,
-          valid_from: toHTMLDateString(guest_account?.valid_from),
-          valid_until: toHTMLDateString(guest_account?.valid_until),
-          sponsor_id: guest_account?.sponsor_id || undefined,
-          notes: guest_account?.notes || undefined,
+          is_active: employee?.is_active ?? true,
         });
       } else {
+        // Create mode
         setFormData({
-          account_type: 'user',
           number: '',
           first_name: '',
           last_name: '',
@@ -66,11 +65,6 @@ const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({
           employee_gender: undefined,
           org_unit_id: undefined,
           supervisor_id: undefined,
-          guest_type: undefined,
-          valid_from: undefined,
-          valid_until: undefined,
-          sponsor_id: undefined,
-          notes: undefined,
         });
       }
       setErrors({});
@@ -84,14 +78,7 @@ const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({
         ? value.toLowerCase()
         : value;
 
-      const updated = { ...prev, [field]: processedValue };
-
-      // Auto-set guest_type to 'intern' when account_type changes to 'guest'
-      if (field === 'account_type' && value === 'guest' && !prev.guest_type) {
-        updated.guest_type = 'intern';
-      }
-
-      return updated;
+      return { ...prev, [field]: processedValue };
     });
 
     if (errors[field]) {
@@ -125,48 +112,15 @@ const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({
       if (!emailValidation.valid) {
         newErrors.email = emailValidation.error || 'Email tidak valid';
       }
-
-      // Guest-specific validation
-      if (formData.account_type === 'guest') {
-        // guest_type is auto-set to 'intern', no need to validate
-        
-        if (!formData.valid_from) {
-          newErrors.valid_from = 'Valid from harus diisi';
-        }
-
-        if (!formData.valid_until) {
-          newErrors.valid_until = 'Valid until harus diisi';
-        } else {
-          const validUntilDate = new Date(formData.valid_until);
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-
-          if (validUntilDate <= today) {
-            newErrors.valid_until = 'Valid until harus di masa depan';
-          }
-        }
-
-        if (formData.valid_from && formData.valid_until) {
-          const validFromDate = new Date(formData.valid_from);
-          const validUntilDate = new Date(formData.valid_until);
-
-          if (validFromDate >= validUntilDate) {
-            newErrors.valid_from = 'Valid from harus sebelum valid until';
-          }
-        }
-      }
     } else {
-      const updateData = formData as Partial<UpdateEmployeeWithAccountRequest>;
-
-      if (updateData.first_name !== undefined && !updateData.first_name?.trim()) {
+      // Update mode validation
+      if (formData.first_name !== undefined && !formData.first_name?.trim()) {
         newErrors.first_name = 'Nama depan tidak boleh kosong';
       }
 
-      if (updateData.last_name !== undefined && !updateData.last_name?.trim()) {
+      if (formData.last_name !== undefined && !formData.last_name?.trim()) {
         newErrors.last_name = 'Nama belakang tidak boleh kosong';
       }
-
-      // Email validation removed - email cannot be updated
     }
 
     if (formData.phone) {
@@ -185,7 +139,7 @@ const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({
 
     if (isEdit) {
       const updateData: UpdateEmployeeWithAccountRequest = {};
-      // Intersection fields (employee + user)
+      // Name fields (update employee + SSO)
       if (formData.first_name !== undefined) updateData.first_name = formData.first_name;
       if (formData.last_name !== undefined) updateData.last_name = formData.last_name;
       if (formData.org_unit_id !== undefined) updateData.org_unit_id = formData.org_unit_id;
@@ -196,22 +150,23 @@ const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({
       if (formData.employee_type !== undefined) updateData.employee_type = formData.employee_type;
       if (formData.employee_gender !== undefined) updateData.employee_gender = formData.employee_gender;
       if (formData.supervisor_id !== undefined) updateData.supervisor_id = formData.supervisor_id;
-      // Guest-only fields (if applicable)
-      if (formData.guest_type !== undefined) updateData.guest_type = formData.guest_type;
-      if (formData.valid_from !== undefined) updateData.valid_from = formData.valid_from;
-      if (formData.valid_until !== undefined) updateData.valid_until = formData.valid_until;
-      if (formData.sponsor_id !== undefined) updateData.sponsor_id = formData.sponsor_id;
-      if (formData.notes !== undefined) updateData.notes = formData.notes;
 
       onSubmit(updateData);
     } else {
       // Create mode: send CreateEmployeeWithAccountRequest
-      // Ensure email is lowercase before submitting
-      const submitData = {
-        ...formData,
-        email: typeof formData.email === 'string' ? formData.email.toLowerCase() : formData.email,
+      const createData: CreateEmployeeWithAccountRequest = {
+        number: formData.number || '',
+        first_name: formData.first_name || '',
+        last_name: formData.last_name || '',
+        email: (formData.email || '').toLowerCase(),
+        org_unit_id: formData.org_unit_id,
+        phone: formData.phone,
+        position: formData.position,
+        employee_type: formData.employee_type,
+        employee_gender: formData.employee_gender,
+        supervisor_id: formData.supervisor_id,
       };
-      onSubmit(submitData);
+      onSubmit(createData);
     }
   };
 
@@ -223,7 +178,7 @@ const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({
       description={
         isEdit
           ? 'Ubah informasi karyawan'
-          : 'Isi formulir di bawah untuk menambahkan karyawan baru'
+          : 'Isi formulir di bawah untuk menambahkan karyawan baru. Akun SSO akan dibuat secara otomatis.'
       }
       mode={isEdit ? 'edit' : 'create'}
       onSubmit={handleSubmit}
