@@ -7,15 +7,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '../ui/dialog';
+} from '@/components/ui/dialog';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from '../ui/card';
-import { Button } from '../ui/button';
-import { Separator } from '../ui/separator';
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import type { OrgUnit } from '@/services/org_units/types';
 
 interface OrgUnitDetailDialogProps {
@@ -33,7 +33,7 @@ export const OrgUnitDetailDialog: React.FC<OrgUnitDetailDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent 
+      <DialogContent
         className="flex max-h-[90vh] w-[95%] flex-col sm:max-w-5xl"
         style={{ maxWidth: '80rem' }}
       >
@@ -82,11 +82,10 @@ export const OrgUnitDetailDialog: React.FC<OrgUnitDetailDialogProps> = ({
                     <div>
                       <div className="text-xs text-muted-foreground mb-1">Status</div>
                       <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          orgUnit.is_active
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${orgUnit.is_active
                             ? 'bg-primary/10 text-primary'
                             : 'bg-muted text-muted-foreground'
-                        }`}
+                          }`}
                       >
                         {orgUnit.is_active ? 'Aktif' : 'Tidak Aktif'}
                       </span>

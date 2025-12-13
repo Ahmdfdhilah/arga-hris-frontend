@@ -1,7 +1,7 @@
 import { ReactNode, useState } from 'react';
-import { cn } from '@workspace/ui/lib/utils';
 import Sidebar from './Sidebar/Sidebar';
 import { useTheme } from '@/hooks/useTheme';
+import { cn } from '@/lib/utils';
 
 interface LayoutProps {
   children: ReactNode;

@@ -103,9 +103,6 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({ ... }) => {
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// 2. UI components
-import { Button } from '@workspace/ui/components/button';
-import { cn } from '@workspace/ui/lib/utils';
 
 // 3. Internal components
 import SubComponent1 from './SubComponent1';
@@ -153,7 +150,6 @@ const MyPage = () => (
 **Full Usage (Title, Description, Breadcrumbs, Actions):**
 ```tsx
 import { PageHeader } from '@/components/common/Header';
-import { Button } from '@workspace/ui/components/button';
 import { Download, RefreshCw } from 'lucide-react';
 
 const MyPage = () => (
@@ -291,9 +287,6 @@ const StatCard: React.FC<StatCardProps> = ({ ... }) => { ... }
 ```tsx
 // External libraries
 import { useState } from 'react';
-
-// UI components
-import { Button } from '@workspace/ui/components/button';
 
 // Internal components
 import { PageHeader } from '@/components/common/Header';

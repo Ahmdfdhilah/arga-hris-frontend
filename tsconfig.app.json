@@ -16,9 +16,7 @@
     "jsx": "react-jsx",
 
     "paths": {
-      "@/*": ["./src/*"],
-      "@workspace/ui/*": ["../../packages/ui/src/*"],
-      "@workspace/tailwind/*": ["../../packages/tailwind/*"]
+      "@/*": ["./src/*"]
     },
 
     /* Linting */

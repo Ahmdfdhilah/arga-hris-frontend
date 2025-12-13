@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
-import { Button } from '../ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Empty,
   EmptyContent,
   EmptyDescription,
   EmptyHeader,
   EmptyTitle,
-} from '../ui/empty';
-import { ItemGroup } from '../ui/item';
+} from '@/components/ui/empty';
+import { ItemGroup } from '@/components/ui/item';
 import { Spinner } from '@/components/common';
 import { PageHeader } from '@/components/common/Header';
 import { Filtering } from '@/components/common/Filtering';
@@ -31,20 +31,20 @@ import {
   Field,
   FieldContent,
   FieldLabel,
-} from '../ui/field';
+} from '@/components/ui/field';
 import {
   InputGroup,
   InputGroupAddon,
-} from '../ui/input-group';
+} from '@/components/ui/input-group';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select';
+} from '@/components/ui/select';
 import { Building2, Layers } from 'lucide-react';
-import { Combobox } from '../ui/combobox';
+import { Combobox } from '@/components/ui/combobox';
 import { Pagination } from '@/components/common';
 
 const OrgUnitList: React.FC = () => {

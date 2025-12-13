@@ -1,14 +1,14 @@
 // import { Link } from 'react-router-dom';
 import { LogOut, Menu } from 'lucide-react';
-import { Button } from '../ui/button';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '../ui/dropdown-menu';
-import { Avatar, AvatarFallback } from '../ui/avatar';
-import { Separator } from '../ui/separator';
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
 import type { CurrentUser } from '@/redux/features/authSlice';
 
 interface MobileTopNavProps {

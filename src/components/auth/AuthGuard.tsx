@@ -30,14 +30,14 @@ const AuthGuard = ({
           await dispatch(verifyAndFetchUserData()).unwrap();
         } catch (error) {
           dispatch(clearAuth());
-          window.location.href = `${SSO_DASHBOARD_URL}/login`;
+          // window.location.href = `${SSO_DASHBOARD_URL}/login`;
         }
       } else if (
         (!accessToken && isAuthenticated) ||
         (!accessToken && !isAuthenticated)
       ) {
         dispatch(clearAuth());
-        window.location.href = `${SSO_DASHBOARD_URL}/login`;
+        // window.location.href = `${SSO_DASHBOARD_URL}/login`;
       }
     };
 

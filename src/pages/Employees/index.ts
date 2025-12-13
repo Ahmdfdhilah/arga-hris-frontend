@@ -6,4 +6,3 @@ export { default as EmployeeFormDialog } from './EmployeeFormDialog';
 export { default as EmployeeFormFields } from './EmployeeFormFields';
 export { EmployeeDetailDialog } from './EmployeeDetailDialog';
 export { ManageRolesDialog } from './ManageRolesDialog';
-export { GuestPasswordModal } from './GuestPasswordModal';

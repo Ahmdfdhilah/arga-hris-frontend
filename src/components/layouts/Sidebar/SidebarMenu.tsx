@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom';
-import { cn } from '@workspace/ui/lib/utils';
-import { ScrollArea } from '../ui/scroll-area';
+import { cn } from '@/lib/utils';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '../ui/accordion';
+} from '@/components/ui/accordion';
 import { MenuItem } from '@/lib/menus';
 import { canAccessMenu } from '@/services/users/utils';
 import type { CurrentUser } from '@/redux/features/authSlice';

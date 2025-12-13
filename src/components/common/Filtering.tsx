@@ -1,13 +1,13 @@
 import { useState, ReactNode } from 'react';
-import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { InfoIcon, Filter, ChevronDown, ChevronUp, Search } from 'lucide-react';
-import { Card, CardContent } from '../ui/card';
-import { Button } from '../ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from '../ui/input-group';
+} from '@/components/ui/input-group';
 
 export interface FilteringProps {
   // Search props

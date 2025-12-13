@@ -1,14 +1,14 @@
 import { LogOut, ChevronsUpDown } from 'lucide-react';
-import { Button } from '../ui/button';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '../ui/dropdown-menu';
-import { Avatar, AvatarFallback } from '../ui/avatar';
-import { Separator } from '../ui/separator';
-import { cn } from '@workspace/ui/lib/utils';
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
 import type { CurrentUser } from '@/redux/features/authSlice';
 
 interface SidebarUserDropdownProps {
