@@ -16,25 +16,24 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import type { EmployeeWithAccount } from '@/services/employees/types';
+import type { Employee } from '@/services/employees/types';
 
 interface EmployeeDetailDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  employee: EmployeeWithAccount | null;
+  employee: Employee | null;
 }
 
 export const EmployeeDetailDialog: React.FC<EmployeeDetailDialogProps> = ({
   open,
   onOpenChange,
-  employee: employeeWithAccount,
+  employee,
 }) => {
-  if (!employeeWithAccount) return null;
+  if (!employee) return null;
 
-  const { employee, user } = employeeWithAccount;
-  const displayName = employee?.name || 'Unknown';
-  const displayEmail = employee?.email || '-';
-  const isActive = (user?.is_active ?? true) && (employee?.is_active ?? true);
+  const displayName = employee.name || 'Unknown';
+  const displayEmail = employee.email || '-';
+  const isActive = employee.is_active;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -68,7 +67,7 @@ export const EmployeeDetailDialog: React.FC<EmployeeDetailDialogProps> = ({
 
                     <div>
                       <div className="text-xs text-muted-foreground mb-1">Nomor Employee</div>
-                      <div className="text-sm font-medium">{employee?.employee_number || '-'}</div>
+                      <div className="text-sm font-medium">{employee.employee_number || '-'}</div>
                     </div>
 
                     <div>
@@ -79,7 +78,7 @@ export const EmployeeDetailDialog: React.FC<EmployeeDetailDialogProps> = ({
                       <div className="text-sm">{displayEmail}</div>
                     </div>
 
-                    {employee?.phone && (
+                    {employee.phone && (
                       <div>
                         <div className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
                           <Phone className="h-3 w-3" />
@@ -96,8 +95,8 @@ export const EmployeeDetailDialog: React.FC<EmployeeDetailDialogProps> = ({
                       </div>
                       <span
                         className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${isActive
-                            ? 'bg-primary/10 text-primary'
-                            : 'bg-muted text-muted-foreground'
+                          ? 'bg-primary/10 text-primary'
+                          : 'bg-muted text-muted-foreground'
                           }`}
                       >
                         {isActive ? 'Aktif' : 'Tidak Aktif'}
@@ -116,28 +115,28 @@ export const EmployeeDetailDialog: React.FC<EmployeeDetailDialogProps> = ({
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid gap-4">
-                    {employee?.position && (
+                    {employee.position && (
                       <div>
                         <div className="text-xs text-muted-foreground mb-1">Posisi</div>
                         <div className="text-sm font-medium">{employee.position}</div>
                       </div>
                     )}
 
-                    {employee?.employee_type && (
+                    {employee.employee_type && (
                       <div>
                         <div className="text-xs text-muted-foreground mb-1">Tipe Employee</div>
                         <div className="text-sm font-medium capitalize">{employee.employee_type.replace('_', ' ')}</div>
                       </div>
                     )}
 
-                    {employee?.employee_gender && (
+                    {employee.employee_gender && (
                       <div>
                         <div className="text-xs text-muted-foreground mb-1">Jenis Kelamin</div>
                         <div className="text-sm font-medium capitalize">{employee.employee_gender === 'male' ? 'Laki-laki' : 'Perempuan'}</div>
                       </div>
                     )}
 
-                    {employee?.org_unit && (
+                    {employee.org_unit && (
                       <div>
                         <div className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
                           <Building2 className="h-3 w-3" />
@@ -150,7 +149,7 @@ export const EmployeeDetailDialog: React.FC<EmployeeDetailDialogProps> = ({
                       </div>
                     )}
 
-                    {employee?.supervisor && (
+                    {employee.supervisor && (
                       <div>
                         <div className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
                           <User className="h-3 w-3" />
@@ -171,7 +170,7 @@ export const EmployeeDetailDialog: React.FC<EmployeeDetailDialogProps> = ({
             <Separator />
 
             <div className="grid grid-cols-2 gap-4 text-xs text-muted-foreground">
-              {employee?.created_at && (
+              {employee.created_at && (
                 <div className="flex items-center gap-2">
                   <Calendar className="h-3 w-3" />
                   <div>
@@ -182,7 +181,7 @@ export const EmployeeDetailDialog: React.FC<EmployeeDetailDialogProps> = ({
                   </div>
                 </div>
               )}
-              {employee?.updated_at && (
+              {employee.updated_at && (
                 <div className="flex items-center gap-2">
                   <Calendar className="h-3 w-3" />
                   <div>

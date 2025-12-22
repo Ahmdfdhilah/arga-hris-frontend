@@ -6,6 +6,7 @@ export interface LeaveRequestCreateRequest {
   start_date: string;
   end_date: string;
   reason: string;
+  replacement_employee_id?: number;
 }
 
 export interface LeaveRequestUpdateRequest {

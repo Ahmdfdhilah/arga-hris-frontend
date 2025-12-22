@@ -2,7 +2,7 @@ import { ReactNode, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { clearAuth, verifyAndFetchUserData } from '@/redux/features/authSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { SSO_DASHBOARD_URL } from '@/config';
+import { CLIENT_ID, SSO_DASHBOARD_URL } from '@/config';
 import { canAccessMenu } from '@/services/users/utils';
 
 interface AuthGuardProps {
@@ -30,14 +30,14 @@ const AuthGuard = ({
           await dispatch(verifyAndFetchUserData()).unwrap();
         } catch (error) {
           dispatch(clearAuth());
-          // window.location.href = `${SSO_DASHBOARD_URL}/login`;
+          window.location.href = `${SSO_DASHBOARD_URL}/login?client_id=${CLIENT_ID}`;
         }
       } else if (
         (!accessToken && isAuthenticated) ||
         (!accessToken && !isAuthenticated)
       ) {
         dispatch(clearAuth());
-        // window.location.href = `${SSO_DASHBOARD_URL}/login`;
+        window.location.href = `${SSO_DASHBOARD_URL}/login?client_id=${CLIENT_ID}`;
       }
     };
 
@@ -45,6 +45,8 @@ const AuthGuard = ({
   }, [accessToken, userData, loading, isAuthenticated, dispatch]);
 
   if (!isAuthenticated || !userData) {
+    const ssoLoginUrl = `${SSO_DASHBOARD_URL}/login?client_id=${CLIENT_ID}`;
+    window.location.href = ssoLoginUrl;
     return null;
   }
 

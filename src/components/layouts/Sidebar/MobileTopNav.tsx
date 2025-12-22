@@ -56,7 +56,7 @@ const MobileTopNav: React.FC<MobileTopNavProps> = ({
               <p className="text-sm font-medium">{getUserFullName()}</p>
               <p
                 className="text-xs text-muted-foreground truncate"
-                title={userData.email}
+                title={userData.email || undefined}
               >
                 {userData.email}
               </p>

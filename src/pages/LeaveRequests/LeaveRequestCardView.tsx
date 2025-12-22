@@ -1,4 +1,4 @@
-import { Edit, MoreVertical, Trash2, Calendar, User, FileText } from 'lucide-react';
+import { Edit, MoreVertical, Trash2, Calendar, User, FileText, Users } from 'lucide-react';
 import {
   Button,
   DropdownMenu,
@@ -56,6 +56,15 @@ const LeaveRequestCardView: React.FC<LeaveRequestCardViewProps> = ({
             <FileText className="h-3.5 w-3.5 shrink-0 mt-0.5" />
             <span className="line-clamp-2 flex-1 min-w-0">{leaveRequest.reason}</span>
           </div>
+
+          {leaveRequest.replacement && (
+            <div className="flex items-start gap-2 text-sm">
+              <Users className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+              <span className="break-words flex-1 min-w-0">
+                Pengganti: {leaveRequest.replacement.employee_name} ({leaveRequest.replacement.employee_number})
+              </span>
+            </div>
+          )}
         </ItemDescription>
 
         <ItemFooter>

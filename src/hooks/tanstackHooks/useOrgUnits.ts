@@ -205,7 +205,7 @@ export const useUpdateOrgUnit = (
   });
 };
 
-export const useSoftDeleteOrgUnit = (
+export const useDeleteOrgUnit = (
   options?: Omit<
     UseMutationOptions<ApiResponse<OrgUnit>, Error, number>,
     'mutationFn'
@@ -216,7 +216,7 @@ export const useSoftDeleteOrgUnit = (
 
   return useMutation({
     ...restOptions,
-    mutationFn: (orgUnitId: number) => orgUnitsService.softDeleteOrgUnit(orgUnitId),
+    mutationFn: (orgUnitId: number) => orgUnitsService.deleteOrgUnit(orgUnitId),
     onSuccess: (response, variables, context, _mutation) => {
       queryClient.invalidateQueries({ queryKey: orgUnitsKeys.lists() });
       queryClient.invalidateQueries({ queryKey: orgUnitsKeys.deletedLists() });
@@ -225,6 +225,31 @@ export const useSoftDeleteOrgUnit = (
       });
 
       toast.success('Unit organisasi berhasil dihapus');
+      onSuccess?.(response, variables, context, _mutation);
+    },
+    onError: (error, variables, context, _mutation) => {
+      const apiError = handleApiError(error);
+      toast.error(apiError.message);
+      onError?.(error, variables, context, _mutation);
+    },
+  });
+};
+
+export const useBulkInsertOrgUnits = (
+  options?: Omit<
+    UseMutationOptions<ApiResponse<any>, Error, FormData>,
+    'mutationFn'
+  >,
+) => {
+  const queryClient = useQueryClient();
+  const { onSuccess, onError, ...restOptions } = options || {};
+
+  return useMutation({
+    ...restOptions,
+    mutationFn: (formData: FormData) => orgUnitsService.bulkInsertOrgUnits(formData),
+    onSuccess: (response, variables, context, _mutation) => {
+      queryClient.invalidateQueries({ queryKey: orgUnitsKeys.lists() });
+      toast.success('Bulk insert unit organisasi berhasil');
       onSuccess?.(response, variables, context, _mutation);
     },
     onError: (error, variables, context, _mutation) => {

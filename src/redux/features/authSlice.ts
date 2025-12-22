@@ -85,7 +85,7 @@ export const logout = createAsyncThunk(
   'auth/logout',
   async (_, { rejectWithValue }) => {
     try {
-      await authService.logout();
+      // await authService.logout();
       return null;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to logout');
@@ -98,7 +98,7 @@ export const logoutAllSessions = createAsyncThunk(
   'auth/logoutAllSessions',
   async (_, { rejectWithValue }) => {
     try {
-      await authService.logoutAllSessions();
+      // await authService.logoutAllSessions();
       return null;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to logout from all sessions');
@@ -116,7 +116,7 @@ const authSlice = createSlice({
       console.log('[authSlice] setTokens - clearing old tokens and setting new ones');
       console.log('[authSlice] Old refresh token:', state.refreshToken ? state.refreshToken.substring(0, 20) + '...' : 'none');
       console.log('[authSlice] New refresh token:', action.payload.refreshToken.substring(0, 20) + '...');
-      
+
       // Clear any existing tokens first to prevent stale token issues
       state.accessToken = null;
       state.refreshToken = null;

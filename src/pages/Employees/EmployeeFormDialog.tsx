@@ -1,56 +1,64 @@
 import { useState, useEffect } from 'react';
 import { FormDialog } from '@/components/common/FormDialog';
 import EmployeeFormFields from './EmployeeFormFields';
-import type { EmployeeWithAccount, CreateEmployeeWithAccountRequest, UpdateEmployeeWithAccountRequest } from '@/services/employees/types';
+import type { Employee, EmployeeType, EmployeeGender } from '@/services/employees/types';
 import { validateEmployeeEmail, validateEmployeePhone, validateEmployeeNumber } from '@/services/employees/utils';
 
 
 interface EmployeeFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  employee?: EmployeeWithAccount | null;
-  onSubmit: (data: CreateEmployeeWithAccountRequest | UpdateEmployeeWithAccountRequest) => void;
+  employee?: Employee | null;
+  onSubmit: (data: any) => void;
   isSubmitting: boolean;
 }
 
-type EmployeeFormData = Partial<CreateEmployeeWithAccountRequest> & Partial<UpdateEmployeeWithAccountRequest> & {
-  is_active?: boolean;
+// Form data matches what EmployeeFormFields expects
+export interface EmployeeFormData {
+  number?: string;
+  first_name?: string;
+  last_name?: string;
   email?: string;
-};
+  phone?: string;
+  position?: string;
+  employee_type?: EmployeeType;
+  employee_gender?: EmployeeGender;
+  org_unit_id?: number;
+  supervisor_id?: number;
+  is_active?: boolean;
+}
 
 const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({
   open,
   onOpenChange,
-  employee: employeeWithAccount = null,
+  employee = null,
   onSubmit,
   isSubmitting,
 }) => {
-  const isEdit = !!employeeWithAccount;
+  const isEdit = !!employee;
   const [formData, setFormData] = useState<EmployeeFormData>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (open) {
-      if (employeeWithAccount) {
-        const { employee } = employeeWithAccount;
-
+      if (employee) {
         // Split name into first_name and last_name
-        const nameParts = (employee?.name || '').split(' ');
+        const nameParts = (employee.name || '').split(' ');
         const firstName = nameParts[0] || '';
         const lastName = nameParts.slice(1).join(' ') || '';
 
         setFormData({
-          number: employee?.employee_number || '',
+          number: employee.employee_number || '',
           first_name: firstName,
           last_name: lastName,
-          email: employee?.email || '',
-          phone: employee?.phone || '',
-          position: employee?.position || '',
-          employee_type: employee?.employee_type || undefined,
-          employee_gender: employee?.employee_gender || undefined,
-          org_unit_id: employee?.org_unit_id || undefined,
-          supervisor_id: employee?.supervisor_id || undefined,
-          is_active: employee?.is_active ?? true,
+          email: employee.email || '',
+          phone: employee.phone || '',
+          position: employee.position || '',
+          employee_type: (employee.employee_type as EmployeeType) || undefined,
+          employee_gender: (employee.employee_gender as EmployeeGender) || undefined,
+          org_unit_id: employee.org_unit_id || undefined,
+          supervisor_id: employee.supervisor_id || undefined,
+          is_active: employee.is_active ?? true,
         });
       } else {
         // Create mode
@@ -65,11 +73,12 @@ const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({
           employee_gender: undefined,
           org_unit_id: undefined,
           supervisor_id: undefined,
+          is_active: true,
         });
       }
       setErrors({});
     }
-  }, [open, employeeWithAccount]);
+  }, [open, employee]);
 
   const handleFieldChange = (field: string, value: string | number | boolean | null | undefined) => {
     setFormData((prev) => {
@@ -137,37 +146,8 @@ const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({
   const handleSubmit = () => {
     if (!validateForm()) return;
 
-    if (isEdit) {
-      const updateData: UpdateEmployeeWithAccountRequest = {};
-      // Name fields (update employee + SSO)
-      if (formData.first_name !== undefined) updateData.first_name = formData.first_name;
-      if (formData.last_name !== undefined) updateData.last_name = formData.last_name;
-      if (formData.org_unit_id !== undefined) updateData.org_unit_id = formData.org_unit_id;
-      // Employee-only fields
-      if (formData.number !== undefined) updateData.number = formData.number;
-      if (formData.phone !== undefined) updateData.phone = formData.phone;
-      if (formData.position !== undefined) updateData.position = formData.position;
-      if (formData.employee_type !== undefined) updateData.employee_type = formData.employee_type;
-      if (formData.employee_gender !== undefined) updateData.employee_gender = formData.employee_gender;
-      if (formData.supervisor_id !== undefined) updateData.supervisor_id = formData.supervisor_id;
-
-      onSubmit(updateData);
-    } else {
-      // Create mode: send CreateEmployeeWithAccountRequest
-      const createData: CreateEmployeeWithAccountRequest = {
-        number: formData.number || '',
-        first_name: formData.first_name || '',
-        last_name: formData.last_name || '',
-        email: (formData.email || '').toLowerCase(),
-        org_unit_id: formData.org_unit_id,
-        phone: formData.phone,
-        position: formData.position,
-        employee_type: formData.employee_type,
-        employee_gender: formData.employee_gender,
-        supervisor_id: formData.supervisor_id,
-      };
-      onSubmit(createData);
-    }
+    // Pass raw form data to parent component which handles the mutation
+    onSubmit(formData);
   };
 
   return (
@@ -178,7 +158,7 @@ const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({
       description={
         isEdit
           ? 'Ubah informasi karyawan'
-          : 'Isi formulir di bawah untuk menambahkan karyawan baru. Akun SSO akan dibuat secara otomatis.'
+          : 'Isi formulir di bawah untuk menambahkan karyawan baru.'
       }
       mode={isEdit ? 'edit' : 'create'}
       onSubmit={handleSubmit}

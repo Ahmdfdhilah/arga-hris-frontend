@@ -51,18 +51,20 @@ class OrgUnitsService extends BaseService {
     return this.put<ApiResponse<OrgUnit>>(`/${orgUnitId}`, request);
   }
 
-  async deleteOrgUnit(orgUnitId: number): Promise<ApiResponse<{ deleted: boolean }>> {
-    return this.delete<ApiResponse<{ deleted: boolean }>>(`/${orgUnitId}`);
+  async deleteOrgUnit(orgUnitId: number): Promise<ApiResponse<OrgUnit>> {
+    return this.delete<ApiResponse<OrgUnit>>(`/${orgUnitId}`);
   }
 
   /**
-   * Soft delete (archive) org unit
-   * Archives org unit in workforce service
-   * Validates no active employees or child org units exist
-   * Requires org_unit.soft_delete permission (super_admin, hr_admin)
+   * POST /org-units/bulk-insert
+   * Bulk insert org units from Excel
    */
-  async softDeleteOrgUnit(orgUnitId: number): Promise<ApiResponse<OrgUnit>> {
-    return this.delete<ApiResponse<OrgUnit>>(`/${orgUnitId}/soft-delete`);
+  async bulkInsertOrgUnits(formData: FormData): Promise<ApiResponse<any>> {
+    return this.post<ApiResponse<any>>('/bulk-insert', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
   }
 
   /**

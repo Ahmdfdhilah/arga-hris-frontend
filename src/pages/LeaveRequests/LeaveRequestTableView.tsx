@@ -1,4 +1,4 @@
-import { Edit, MoreVertical, Trash2, Calendar } from 'lucide-react';
+import { Edit, MoreVertical, Trash2, Calendar, Users } from 'lucide-react';
 import {
   Button,
   DropdownMenu,
@@ -35,6 +35,7 @@ const LeaveRequestTableView: React.FC<LeaveRequestTableViewProps> = ({
             <TableHead>Jenis Cuti</TableHead>
             <TableHead>Periode Cuti</TableHead>
             <TableHead className="text-center">Durasi</TableHead>
+            <TableHead>Pengganti</TableHead>
             <TableHead>Alasan</TableHead>
             <TableHead className="w-[70px]"></TableHead>
           </TableRow>
@@ -71,6 +72,20 @@ const LeaveRequestTableView: React.FC<LeaveRequestTableViewProps> = ({
 
               <TableCell className="text-center">
                 <span className="font-medium">{leaveRequest.total_days} hari</span>
+              </TableCell>
+
+              <TableCell>
+                {leaveRequest.replacement ? (
+                  <div className="flex items-center gap-2 text-sm">
+                    <Users className="h-3.5 w-3.5 text-muted-foreground" />
+                    <div>
+                      <p className="font-medium">{leaveRequest.replacement.employee_name}</p>
+                      <p className="text-xs text-muted-foreground">{leaveRequest.replacement.employee_number}</p>
+                    </div>
+                  </div>
+                ) : (
+                  <span className="text-sm text-muted-foreground">-</span>
+                )}
               </TableCell>
 
               <TableCell>

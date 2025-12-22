@@ -27,13 +27,26 @@ import {
   UserCog,
 } from 'lucide-react';
 import { useOrgUnitSearch } from '@/hooks/useOrgUnitSearch';
-import type { CreateEmployeeWithAccountRequest, UpdateEmployeeWithAccountRequest } from '@/services/employees/types';
-import { EMPLOYEE_TYPE_OPTIONS, EMPLOYEE_GENDER_OPTIONS } from '@/services/employees/types';
+import {
+  EMPLOYEE_TYPE_OPTIONS,
+  EMPLOYEE_GENDER_OPTIONS,
+  type EmployeeType,
+  type EmployeeGender,
+} from '@/services/employees/types';
 
-type EmployeeFormData = Partial<CreateEmployeeWithAccountRequest> & Partial<UpdateEmployeeWithAccountRequest> & {
-  is_active?: boolean;
+export interface EmployeeFormData {
+  number?: string;
+  first_name?: string;
+  last_name?: string;
   email?: string;
-};
+  phone?: string;
+  position?: string;
+  employee_type?: EmployeeType;
+  employee_gender?: EmployeeGender;
+  org_unit_id?: number;
+  supervisor_id?: number;
+  is_active?: boolean;
+}
 
 interface EmployeeFormFieldsProps {
   formData: EmployeeFormData;

@@ -33,41 +33,39 @@ import { useResponsive } from '@/hooks/useResponsive';
 import { useURLFilters } from '@/hooks/useURLFilters';
 import { useOrgUnitSearch } from '@/hooks/useOrgUnitSearch';
 import {
-  useEmployeesWithAccount,
-  useCreateEmployeeWithAccount,
-  useUpdateEmployeeWithAccount,
-  useDeactivateEmployeeAccount,
-  useActivateEmployeeAccount,
-  useSoftDeleteEmployeeAccount,
+  useEmployees,
+  useCreateEmployee,
+  useUpdateEmployee,
+  useDeleteEmployee,
 } from '@/hooks/tanstackHooks/useEmployees';
 import type {
-  EmployeeWithAccount,
-  EmployeeWithAccountFilterParams,
-  CreateEmployeeWithAccountRequest,
-  UpdateEmployeeWithAccountRequest
+  Employee,
+  EmployeeFilterParams,
+  CreateEmployeeRequest,
+  UpdateEmployeeRequest
 } from '@/services/employees/types';
 import type { PaginationParams } from '@/services/base/types';
 import EmployeeTableView from './EmployeeTableView';
-import EmployeeCardView from './EmployeeCardView';
+import { EmployeeCardView } from './EmployeeCardView';
 import EmployeeFormDialog from './EmployeeFormDialog';
 import { EmployeeDetailDialog } from './EmployeeDetailDialog';
-import { ManageRolesDialog } from './ManageRolesDialog';
+// import { ManageRolesDialog } from './ManageRolesDialog'; // Disable for now as we focus on Employee schema alignment
 
 const EmployeeList: React.FC = () => {
   const { isDesktop } = useResponsive();
   const [formOpen, setFormOpen] = useState(false);
-  const [selectedEmployeeWithAccount, setSelectedEmployeeWithAccount] = useState<EmployeeWithAccount | null>(null);
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
-  const [employeeToDeactivate, setEmployeeToDeactivate] = useState<EmployeeWithAccount | null>(null);
-  const [employeeToDelete, setEmployeeToDelete] = useState<EmployeeWithAccount | null>(null);
+  const [employeeToDeactivate, setEmployeeToDeactivate] = useState<Employee | null>(null);
+  const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
-  const [employeeToView, setEmployeeToView] = useState<EmployeeWithAccount | null>(null);
-  const [manageRolesDialogOpen, setManageRolesDialogOpen] = useState(false);
-  const [employeeToManageRoles, setEmployeeToManageRoles] = useState<EmployeeWithAccount | null>(null);
+  const [employeeToView, setEmployeeToView] = useState<Employee | null>(null);
+  // const [manageRolesDialogOpen, setManageRolesDialogOpen] = useState(false);
+  // const [employeeToManageRoles, setEmployeeToManageRoles] = useState<Employee | null>(null);
 
 
-  const urlFiltersHook = useURLFilters<PaginationParams & EmployeeWithAccountFilterParams>({
+  const urlFiltersHook = useURLFilters<PaginationParams & EmployeeFilterParams>({
     defaults: {
       page: 1,
       limit: 20,
@@ -87,12 +85,10 @@ const EmployeeList: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters.org_unit_id]);
 
-  const { data, isLoading, isError, error } = useEmployeesWithAccount(filters);
-  const createEmployeeWithAccountMutation = useCreateEmployeeWithAccount();
-  const updateEmployeeWithAccountMutation = useUpdateEmployeeWithAccount();
-  const deactivateEmployeeAccountMutation = useDeactivateEmployeeAccount();
-  const activateEmployeeAccountMutation = useActivateEmployeeAccount();
-  const softDeleteEmployeeAccountMutation = useSoftDeleteEmployeeAccount();
+  const { data, isLoading, isError, error } = useEmployees(filters);
+  const createEmployeeMutation = useCreateEmployee();
+  const updateEmployeeMutation = useUpdateEmployee();
+  const deleteEmployeeMutation = useDeleteEmployee();
 
   const handleSearch = (value: string) => {
     urlFiltersHook.updateURL({ search: value, page: 1 });
@@ -109,47 +105,48 @@ const EmployeeList: React.FC = () => {
   const hasActiveFilters = urlFiltersHook.hasActiveFilters();
 
   const handleCreate = () => {
-    setSelectedEmployeeWithAccount(null);
+    setSelectedEmployee(null);
     setFormOpen(true);
   };
 
-  const handleView = (employeeWithAccount: EmployeeWithAccount) => {
-    setEmployeeToView(employeeWithAccount);
+  const handleView = (employee: Employee) => {
+    setEmployeeToView(employee);
     setDetailDialogOpen(true);
   };
 
-  const handleEdit = (employeeWithAccount: EmployeeWithAccount) => {
-    setSelectedEmployeeWithAccount(employeeWithAccount);
+  const handleEdit = (employee: Employee) => {
+    setSelectedEmployee(employee);
     setFormOpen(true);
   };
 
-  const handleDeactivate = (employeeWithAccount: EmployeeWithAccount) => {
-    setEmployeeToDeactivate(employeeWithAccount);
+  const handleDeactivate = (employee: Employee) => {
+    setEmployeeToDeactivate(employee);
     setConfirmOpen(true);
   };
 
-  const handleActivate = (employeeWithAccount: EmployeeWithAccount) => {
-    const userId = employeeWithAccount.user?.id;
-    if (!userId) return;
-    activateEmployeeAccountMutation.mutate(userId);
+  const handleActivate = (employee: Employee) => {
+    if (!employee.id) return;
+    updateEmployeeMutation.mutate({
+      employeeId: employee.id,
+      data: { is_active: true }
+    });
   };
 
-  const handleManageRoles = (employeeWithAccount: EmployeeWithAccount) => {
-    setEmployeeToManageRoles(employeeWithAccount);
-    setManageRolesDialogOpen(true);
+  const handleManageRoles = (employee: Employee) => {
+    // setEmployeeToManageRoles(employee);
+    // setManageRolesDialogOpen(true);
+    console.log("Manage roles not implemented yet for Employee view", employee);
   };
 
-  const handleDelete = (employeeWithAccount: EmployeeWithAccount) => {
-    setEmployeeToDelete(employeeWithAccount);
+  const handleDelete = (employee: Employee) => {
+    setEmployeeToDelete(employee);
     setConfirmDeleteOpen(true);
   };
 
   const confirmDelete = () => {
-    if (!employeeToDelete) return;
-    const userId = employeeToDelete.user?.id;
-    if (!userId) return;
+    if (!employeeToDelete || !employeeToDelete.id) return;
 
-    softDeleteEmployeeAccountMutation.mutate(userId, {
+    deleteEmployeeMutation.mutate(employeeToDelete.id, {
       onSuccess: () => {
         setConfirmDeleteOpen(false);
         setEmployeeToDelete(null);
@@ -158,12 +155,12 @@ const EmployeeList: React.FC = () => {
   };
 
   const confirmDeactivate = () => {
-    if (!employeeToDeactivate) return;
-    const userId = employeeToDeactivate.user?.id;
-    if (!userId) return;
+    if (!employeeToDeactivate || !employeeToDeactivate.id) return;
 
-    // Deactivate employee and account in one operation
-    deactivateEmployeeAccountMutation.mutate(userId, {
+    updateEmployeeMutation.mutate({
+      employeeId: employeeToDeactivate.id,
+      data: { is_active: false }
+    }, {
       onSuccess: () => {
         setConfirmOpen(false);
         setEmployeeToDeactivate(null);
@@ -172,38 +169,39 @@ const EmployeeList: React.FC = () => {
   };
 
   const handleSubmit = (formData: any) => {
-    if (selectedEmployeeWithAccount) {
-      // Edit mode: update employee with account (unified)
-      const updateData: UpdateEmployeeWithAccountRequest = {
-        first_name: formData.first_name,
-        last_name: formData.last_name,
+    // Helper to combine name
+    const fullName = `${formData.first_name || ''} ${formData.last_name || ''}`.trim() || formData.name;
+
+    if (selectedEmployee) {
+      // Edit mode
+      const updateData: UpdateEmployeeRequest = {
+        name: fullName,
         org_unit_id: formData.org_unit_id,
-        number: formData.number,
+        employee_number: formData.number, // Form uses 'number', API uses 'employee_number'
         phone: formData.phone,
         position: formData.position,
         employee_type: formData.employee_type,
         employee_gender: formData.employee_gender,
         supervisor_id: formData.supervisor_id,
+        is_active: formData.is_active,
       };
 
-      const userId = selectedEmployeeWithAccount.user?.id;
-      if (!userId) return;
+      if (!selectedEmployee.id) return;
 
-      updateEmployeeWithAccountMutation.mutate(
-        { userId: userId, data: updateData },
+      updateEmployeeMutation.mutate(
+        { employeeId: selectedEmployee.id, data: updateData },
         {
           onSuccess: () => {
             setFormOpen(false);
-            setSelectedEmployeeWithAccount(null);
+            setSelectedEmployee(null);
           },
         },
       );
     } else {
-      // Create mode: create employee with account (unified)
-      const createData: CreateEmployeeWithAccountRequest = {
-        number: formData.number,
-        first_name: formData.first_name,
-        last_name: formData.last_name,
+      // Create mode
+      const createData: CreateEmployeeRequest = {
+        employee_number: formData.number,
+        name: fullName,
         email: formData.email,
         org_unit_id: formData.org_unit_id,
         phone: formData.phone,
@@ -211,12 +209,12 @@ const EmployeeList: React.FC = () => {
         employee_type: formData.employee_type,
         employee_gender: formData.employee_gender,
         supervisor_id: formData.supervisor_id,
+        is_active: formData.is_active,
       };
 
-      createEmployeeWithAccountMutation.mutate(createData, {
+      createEmployeeMutation.mutate(createData, {
         onSuccess: () => {
           setFormOpen(false);
-          // Note: temporary password is shown by the backend as toast/notification
         },
       });
     }
@@ -393,18 +391,16 @@ const EmployeeList: React.FC = () => {
                 />
               ) : (
                 <ItemGroup>
-                  {data.data.map((employeeWithAccount) => (
-                    <EmployeeCardView
-                      key={employeeWithAccount.employee?.id || employeeWithAccount.user?.id}
-                      employee={employeeWithAccount}
-                      onView={handleView}
-                      onEdit={handleEdit}
-                      onDeactivate={handleDeactivate}
-                      onActivate={handleActivate}
-                      onDelete={handleDelete}
-                      onManageRoles={handleManageRoles}
-                    />
-                  ))}
+                  <EmployeeCardView
+                    employees={data.data}
+                    isLoading={isLoading}
+                    onView={handleView}
+                    onEdit={handleEdit}
+                    onDeactivate={handleDeactivate}
+                    onActivate={handleActivate}
+                    onDelete={handleDelete}
+                    onManageRoles={handleManageRoles}
+                  />
                 </ItemGroup>
               )}
             </>
@@ -426,9 +422,9 @@ const EmployeeList: React.FC = () => {
       <EmployeeFormDialog
         open={formOpen}
         onOpenChange={setFormOpen}
-        employee={selectedEmployeeWithAccount}
+        employee={selectedEmployee}
         onSubmit={handleSubmit}
-        isSubmitting={createEmployeeWithAccountMutation.isPending || updateEmployeeWithAccountMutation.isPending}
+        isSubmitting={createEmployeeMutation.isPending || updateEmployeeMutation.isPending}
       />
 
       <EmployeeDetailDialog
@@ -437,20 +433,20 @@ const EmployeeList: React.FC = () => {
         employee={employeeToView}
       />
 
-      <ManageRolesDialog
+      {/*   <ManageRolesDialog
         open={manageRolesDialogOpen}
         onOpenChange={setManageRolesDialogOpen}
         employee={employeeToManageRoles}
-      />
+      /> */}
 
       <ConfirmDialog
         isOpen={confirmOpen}
         onClose={() => setConfirmOpen(false)}
         title="Nonaktifkan Karyawan?"
-        description={`Apakah Anda yakin ingin menonaktifkan karyawan "${employeeToDeactivate?.employee?.name || 'ini'}"? Karyawan yang dinonaktifkan tidak akan bisa login ke sistem.`}
+        description={`Apakah Anda yakin ingin menonaktifkan karyawan "${employeeToDeactivate?.name || 'ini'}"?`}
         variant="danger"
         onConfirm={confirmDeactivate}
-        isProcessing={deactivateEmployeeAccountMutation.isPending}
+        isProcessing={updateEmployeeMutation.isPending}
         confirmText="Nonaktifkan"
         cancelText="Batal"
       />
@@ -462,10 +458,10 @@ const EmployeeList: React.FC = () => {
           setEmployeeToDelete(null);
         }}
         title="Hapus Karyawan?"
-        description={`Apakah Anda yakin ingin menghapus karyawan "${employeeToDelete?.employee?.name || 'ini'}"? Data yang dihapus dapat dipulihkan kembali dari menu Karyawan Terhapus.`}
+        description={`Apakah Anda yakin ingin menghapus karyawan "${employeeToDelete?.name || 'ini'}"? Data yang dihapus dapat dipulihkan kembali dari menu Karyawan Terhapus.`}
         variant="danger"
         onConfirm={confirmDelete}
-        isProcessing={softDeleteEmployeeAccountMutation.isPending}
+        isProcessing={deleteEmployeeMutation.isPending}
         confirmText="Hapus"
         cancelText="Batal"
       />

@@ -19,7 +19,7 @@ import { hasPermission } from '@/services/users/utils';
 import { useResponsive } from '@/hooks/useResponsive';
 import { useURLFilters } from '@/hooks/useURLFilters';
 import { useOrgUnitSearch } from '@/hooks/useOrgUnitSearch';
-import { useOrgUnits, useOrgUnitTypes, useCreateOrgUnit, useUpdateOrgUnit, useSoftDeleteOrgUnit } from '@/hooks/tanstackHooks/useOrgUnits';
+import { useOrgUnits, useOrgUnitTypes, useCreateOrgUnit, useUpdateOrgUnit, useDeleteOrgUnit } from '@/hooks/tanstackHooks/useOrgUnits';
 import type { OrgUnit, OrgUnitFilterParams, CreateOrgUnitRequest, UpdateOrgUnitRequest } from '@/services/org_units/types';
 import type { PaginationParams } from '@/services/base/types';
 import OrgUnitTableView from './OrgUnitTableView';
@@ -87,7 +87,7 @@ const OrgUnitList: React.FC = () => {
   const { data: typesData } = useOrgUnitTypes();
   const createMutation = useCreateOrgUnit();
   const updateMutation = useUpdateOrgUnit();
-  const softDeleteMutation = useSoftDeleteOrgUnit();
+  const deleteMutation = useDeleteOrgUnit();
 
   const handleSearch = (value: string) => {
     urlFiltersHook.updateURL({ search: value, page: 1 });
@@ -125,7 +125,7 @@ const OrgUnitList: React.FC = () => {
 
   const confirmDelete = () => {
     if (!orgUnitToDelete) return;
-    softDeleteMutation.mutate(orgUnitToDelete.id, {
+    deleteMutation.mutate(orgUnitToDelete.id, {
       onSuccess: () => {
         setConfirmOpen(false);
         setOrgUnitToDelete(null);
@@ -365,7 +365,7 @@ const OrgUnitList: React.FC = () => {
         description={`Apakah Anda yakin ingin menghapus unit organisasi "${orgUnitToDelete?.name}"? Data yang dihapus dapat dipulihkan kembali dari menu Unit Terhapus.`}
         variant="danger"
         onConfirm={confirmDelete}
-        isProcessing={softDeleteMutation.isPending}
+        isProcessing={deleteMutation.isPending}
         confirmText="Hapus"
         cancelText="Batal"
       />

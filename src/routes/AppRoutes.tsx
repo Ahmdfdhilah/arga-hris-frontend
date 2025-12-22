@@ -6,7 +6,7 @@ import { OrgUnitsRoutes } from './org-units';
 import { AttendancesRoutes } from './attendances';
 import { LeaveRequestsRoutes } from './leave-requests';
 import { ReportsRoutes } from './reports';
-import { WorkSubmissionsRoutes } from './work-submissions';
+import { AssignmentsRoutes } from './assignments';
 
 const AppRoutes = () => {
   return (
@@ -14,9 +14,6 @@ const AppRoutes = () => {
 
       {/* Dashboard Routes */}
       {DashboardRoutes()}
-
-      {/* Users Management Routes - digabung dengan Employee management */}
-      {/* {UsersRoutes()} */}
 
       {/* Employees Management Routes */}
       {EmployeesRoutes()}
@@ -33,8 +30,8 @@ const AppRoutes = () => {
       {/* Reports Management Routes */}
       {ReportsRoutes()}
 
-      {/* Work Submissions Management Routes */}
-      {WorkSubmissionsRoutes()}
+      {/* Assignments Management Routes */}
+      {AssignmentsRoutes()}
 
       {/* Error Routes */}
       <Route path="/unauthorized" element={<Unauthorized />} />

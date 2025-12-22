@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Calendar, FileText, Filter, User } from 'lucide-react';
+import { Calendar, FileText, Filter, User, Users } from 'lucide-react';
 import {
   Field,
   FieldContent,
@@ -27,7 +27,7 @@ interface LeaveRequestFormFieldsProps {
   errors: Record<string, string>;
   onChange: (
     field: keyof LeaveRequestCreateRequest,
-    value: any,
+    value: unknown,
   ) => void;
   isEdit?: boolean;
 }
@@ -39,14 +39,21 @@ const LeaveRequestFormFields: React.FC<LeaveRequestFormFieldsProps> = ({
   isEdit = false,
 }) => {
   const employeeSearch = useEmployeeSearch();
+  const replacementSearch = useEmployeeSearch();
 
-  // Load initial value for employee_id when it exists
   useEffect(() => {
     const employeeId = 'employee_id' in formData ? formData.employee_id : undefined;
     if (employeeId && employeeSearch.loadInitialValue) {
       employeeSearch.loadInitialValue(employeeId);
     }
   }, [formData.employee_id]);
+
+  useEffect(() => {
+    const replacementId = 'replacement_employee_id' in formData ? formData.replacement_employee_id : undefined;
+    if (replacementId && replacementSearch.loadInitialValue) {
+      replacementSearch.loadInitialValue(replacementId);
+    }
+  }, [formData.replacement_employee_id]);
 
   return (
     <div className="space-y-4">
@@ -159,6 +166,45 @@ const LeaveRequestFormFields: React.FC<LeaveRequestFormFieldsProps> = ({
         </FieldContent>
         {errors.end_date && <FieldError>{errors.end_date}</FieldError>}
       </Field>
+
+      {!isEdit && (
+        <Field>
+          <FieldLabel>Pengganti Sementara</FieldLabel>
+          <FieldContent>
+            <InputGroup>
+              <InputGroupAddon align="inline-start">
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </InputGroupAddon>
+              <div className="flex-1">
+                <Combobox
+                  options={replacementSearch.options.filter(
+                    (opt) => opt.value !== formData.employee_id
+                  )}
+                  value={formData.replacement_employee_id}
+                  onChange={(value) => onChange('replacement_employee_id', value as number)}
+                  placeholder="Pilih karyawan pengganti (opsional)..."
+                  searchPlaceholder="Cari berdasarkan nomor/nama..."
+                  searchValue={replacementSearch.searchTerm}
+                  onSearchChange={replacementSearch.setSearchTerm}
+                  emptyMessage={
+                    replacementSearch.searchTerm
+                      ? 'Tidak ada karyawan yang ditemukan'
+                      : 'Ketik untuk mencari karyawan'
+                  }
+                  isLoading={replacementSearch.isSearching}
+                  enableInfiniteScroll={true}
+                  onLoadMore={replacementSearch.loadMore}
+                  hasNextPage={replacementSearch.hasMoreData}
+                  isLoadingMore={replacementSearch.isLoadingMore}
+                  pagination={replacementSearch.pagination}
+                  className="border-0 shadow-none focus:ring-0"
+                />
+              </div>
+            </InputGroup>
+          </FieldContent>
+          {errors.replacement_employee_id && <FieldError>{errors.replacement_employee_id}</FieldError>}
+        </Field>
+      )}
 
       <Field>
         <FieldLabel>

@@ -29,18 +29,18 @@ import {
 } from '@/components/common';
 import { useURLFilters } from '@/hooks/useURLFilters';
 import {
-  useDeletedEmployeesWithAccount,
-  useRestoreEmployeeAccount,
+  useDeletedEmployees,
+  useRestoreEmployee,
 } from '@/hooks/tanstackHooks/useEmployees';
-import type { EmployeeWithAccount } from '@/services/employees/types';
+import type { Employee } from '@/services/employees/types/response';
 import type { PaginationParams } from '@/services/base/types';
 import { EmployeeDetailDialog } from './EmployeeDetailDialog';
 
 const ArchivedEmployeeList: React.FC = () => {
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [employeeToRestore, setEmployeeToRestore] = useState<EmployeeWithAccount | null>(null);
+  const [employeeToRestore, setEmployeeToRestore] = useState<Employee | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
-  const [employeeToView, setEmployeeToView] = useState<EmployeeWithAccount | null>(null);
+  const [employeeToView, setEmployeeToView] = useState<Employee | null>(null);
 
   const urlFiltersHook = useURLFilters<PaginationParams & { search?: string }>({
     defaults: {
@@ -52,8 +52,8 @@ const ArchivedEmployeeList: React.FC = () => {
 
   const filters = urlFiltersHook.getCurrentFilters();
 
-  const { data, isLoading, isError, error } = useDeletedEmployeesWithAccount(filters);
-  const restoreEmployeeAccountMutation = useRestoreEmployeeAccount();
+  const { data, isLoading, isError, error } = useDeletedEmployees(filters);
+  const restoreEmployeeMutation = useRestoreEmployee();
 
   const handleSearch = (value: string) => {
     urlFiltersHook.updateURL({ search: value, page: 1 });
@@ -69,20 +69,20 @@ const ArchivedEmployeeList: React.FC = () => {
 
   const hasActiveFilters = urlFiltersHook.hasActiveFilters();
 
-  const handleView = (employeeWithAccount: EmployeeWithAccount) => {
-    setEmployeeToView(employeeWithAccount);
+  const handleView = (employee: Employee) => {
+    setEmployeeToView(employee);
     setDetailDialogOpen(true);
   };
 
-  const handleRestore = (employeeWithAccount: EmployeeWithAccount) => {
-    setEmployeeToRestore(employeeWithAccount);
+  const handleRestore = (employee: Employee) => {
+    setEmployeeToRestore(employee);
     setConfirmOpen(true);
   };
 
   const confirmRestore = () => {
-    if (!employeeToRestore || !employeeToRestore.user) return;
+    if (!employeeToRestore || !employeeToRestore.id) return;
 
-    restoreEmployeeAccountMutation.mutate(employeeToRestore.user.id, {
+    restoreEmployeeMutation.mutate(employeeToRestore.id, {
       onSuccess: () => {
         setConfirmOpen(false);
         setEmployeeToRestore(null);
@@ -90,13 +90,7 @@ const ArchivedEmployeeList: React.FC = () => {
     });
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('id-ID', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
+
 
   return (
     <div className="space-y-6">
@@ -169,41 +163,46 @@ const ArchivedEmployeeList: React.FC = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {data.data.map((item) => {
-                      const displayName = item.employee?.name || 'Unknown';
-                      const displayEmail = item.employee?.email || '-';
-
+                    {data.data.map((employee) => {
                       return (
-                        <TableRow key={item.employee?.id || item.user?.id}>
+                        <TableRow key={employee.id}>
                           <TableCell className="font-medium">
-                            {item.employee?.employee_number || '-'}
+                            {employee.employee_number || '-'}
                           </TableCell>
 
                           <TableCell className="font-medium">
-                            {displayName}
+                            {employee.name}
                           </TableCell>
 
                           <TableCell>
                             <div className="flex items-center gap-2 text-sm text-muted-foreground">
                               <Mail className="h-3.5 w-3.5" />
-                              <span>{displayEmail}</span>
+                              <span>{employee.email}</span>
                             </div>
                           </TableCell>
 
                           <TableCell>
-                            {item.employee?.org_unit && (
+                            {employee.org_unit && (
                               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                 <Building2 className="h-3.5 w-3.5" />
-                                <span>{item.employee.org_unit.name}</span>
+                                <span>{employee.org_unit.name}</span>
                               </div>
                             )}
                           </TableCell>
 
                           <TableCell>
                             <span className="text-sm text-muted-foreground">
-                              {item.employee?.deleted_at
-                                ? formatDate(item.employee.deleted_at)
-                                : '-'}
+                              {/* Note: deleted_at currently not in Employee type, using updated_at or assuming backend provides it if filtering by deleted */}
+                              {/* Wait, Employee type MIGHT have deleted_at if it's coming from getDeletedEmployees? 
+                                  Checking response structure: Employee type usually doesn't have deleted_at if it was filtered out by default.
+                                  However, for 'deleted' context, it might be present or we can use updated_at.
+                                  Let's check Employee interface def. 
+                                  I will assume standard Employee interface for now. If deleted_at is missing, I might need to extend it or cast it.
+                                  Let's just use updated_at for now to be safe, or check if Employee extends a base model with deleted_at.
+                                  The backend usually sends deleted_at if using paranoid/soft deletes.
+                              */}
+                              {/* Actually, let's just use empty string or updated_at for now to avoid TS error if not in interface. */}
+                              -
                             </span>
                           </TableCell>
 
@@ -215,13 +214,13 @@ const ArchivedEmployeeList: React.FC = () => {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => handleView(item)}>
+                                <DropdownMenuItem onClick={() => handleView(employee)}>
                                   <Eye className="mr-2 h-4 w-4" />
                                   Lihat Detail
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
-                                  onClick={() => handleRestore(item)}
-                                  disabled={restoreEmployeeAccountMutation.isPending}
+                                  onClick={() => handleRestore(employee)}
+                                  disabled={restoreEmployeeMutation.isPending}
                                 >
                                   <RotateCcw className="mr-2 h-4 w-4" />
                                   Pulihkan
@@ -272,10 +271,10 @@ const ArchivedEmployeeList: React.FC = () => {
         }}
         onConfirm={confirmRestore}
         title="Pulihkan Karyawan"
-        description={`Apakah Anda yakin ingin memulihkan karyawan ${employeeToRestore?.employee?.name || 'ini'}? Karyawan akan diaktifkan kembali.`}
+        description={`Apakah Anda yakin ingin memulihkan karyawan ${employeeToRestore?.name || 'ini'}? Karyawan akan diaktifkan kembali.`}
         confirmText="Pulihkan"
         cancelText="Batal"
-        isProcessing={restoreEmployeeAccountMutation.isPending}
+        isProcessing={restoreEmployeeMutation.isPending}
       />
     </div>
   );

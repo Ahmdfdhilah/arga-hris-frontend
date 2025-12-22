@@ -54,9 +54,9 @@ const SidebarUserDropdown: React.FC<SidebarUserDropdownProps> = ({
                   <span className="font-medium">{getUserFullName()}</span>
                   <span
                     className="text-xs text-muted-foreground"
-                    title={userData.email}
+                    title={userData.email || undefined}
                   >
-                    {getTruncatedEmail(userData.email)}
+                    {getTruncatedEmail(userData.email || '')}
                   </span>
                 </div>
               </div>
@@ -68,7 +68,7 @@ const SidebarUserDropdown: React.FC<SidebarUserDropdownProps> = ({
               <p className="text-sm font-medium">{getUserFullName()}</p>
               <p
                 className="text-xs text-muted-foreground truncate"
-                title={userData.email}
+                title={userData.email || undefined}
               >
                 {userData.email}
               </p>
@@ -112,7 +112,7 @@ const SidebarUserDropdown: React.FC<SidebarUserDropdownProps> = ({
               <p className="text-sm font-medium">{getUserFullName()}</p>
               <p
                 className="text-xs text-muted-foreground truncate"
-                title={userData.email}
+                title={userData.email || undefined}
               >
                 {userData.email}
               </p>

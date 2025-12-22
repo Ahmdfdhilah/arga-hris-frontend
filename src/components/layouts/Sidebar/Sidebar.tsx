@@ -132,7 +132,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const getUserFullName = () => {
     if (!userData) return '';
-    return userData.full_name || `${userData.first_name} ${userData.last_name}`.trim();
+    return userData.name;
   };
 
   const getPrimaryRole = () => {
@@ -151,7 +151,10 @@ const Sidebar: React.FC<SidebarProps> = ({
       {isMobile && (
         <MobileTopNav
           userData={userData}
-          getUserInitials={() => getUserInitials(userData.first_name, userData.last_name)}
+          getUserInitials={() => {
+            const parts = (userData.name || '').split(' ');
+            return getUserInitials(parts[0] || '', parts.slice(1).join(' ') || '');
+          }}
           getUserFullName={getUserFullName}
           handleLogout={handleLogout}
           setIsSidebarOpen={setIsSidebarOpen}
@@ -175,7 +178,10 @@ const Sidebar: React.FC<SidebarProps> = ({
               isMobile={isMobile}
               isDarkMode={isDarkMode}
               userData={userData}
-              getUserInitials={() => getUserInitials(userData.first_name, userData.last_name)}
+              getUserInitials={() => {
+                const parts = (userData.name || '').split(' ');
+                return getUserInitials(parts[0] || '', parts.slice(1).join(' ') || '');
+              }}
               getUserFullName={getUserFullName}
               getPrimaryRole={getPrimaryRole}
               getTruncatedEmail={(email) => truncateEmail(email)}
@@ -207,7 +213,10 @@ const Sidebar: React.FC<SidebarProps> = ({
             isMobile={isMobile}
             isDarkMode={isDarkMode}
             userData={userData}
-            getUserInitials={() => getUserInitials(userData.first_name, userData.last_name)}
+            getUserInitials={() => {
+              const parts = (userData.name || '').split(' ');
+              return getUserInitials(parts[0] || '', parts.slice(1).join(' ') || '');
+            }}
             getUserFullName={getUserFullName}
             getPrimaryRole={getPrimaryRole}
             getTruncatedEmail={(email) => truncateEmail(email)}

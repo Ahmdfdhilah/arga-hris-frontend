@@ -14,17 +14,17 @@ import {
   AvatarFallback,
 } from '@/components/common';
 import { Mail, MoreVertical, Edit, UserX, UserCheck, Building2, Eye, Shield, Briefcase, Trash2 } from 'lucide-react';
-import type { EmployeeWithAccount } from '@/services/employees/types';
+import type { Employee } from '@/services/employees/types';
 import { EMPLOYEE_TYPE_OPTIONS } from '@/services/employees/types/shared';
 
 interface EmployeeTableViewProps {
-  employees: EmployeeWithAccount[];
-  onView?: (employeeWithAccount: EmployeeWithAccount) => void;
-  onEdit: (employeeWithAccount: EmployeeWithAccount) => void;
-  onDeactivate: (employeeWithAccount: EmployeeWithAccount) => void;
-  onActivate: (employeeWithAccount: EmployeeWithAccount) => void;
-  onDelete?: (employeeWithAccount: EmployeeWithAccount) => void;
-  onManageRoles?: (employeeWithAccount: EmployeeWithAccount) => void;
+  employees: Employee[];
+  onView?: (employee: Employee) => void;
+  onEdit: (employee: Employee) => void;
+  onDeactivate: (employee: Employee) => void;
+  onActivate: (employee: Employee) => void;
+  onDelete?: (employee: Employee) => void;
+  onManageRoles?: (employee: Employee) => void;
 }
 
 const getInitials = (name: string): string => {
@@ -66,14 +66,13 @@ const EmployeeTableView: React.FC<EmployeeTableViewProps> = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {employees.map((employeeWithAccount) => {
-            const { employee, user } = employeeWithAccount;
-            const displayName = employee?.name || 'Unknown';
-            const displayEmail = employee?.email || '-';
-            const isActive = (user?.is_active ?? true) && (employee?.is_active ?? true);
+          {employees.map((employee) => {
+            const displayName = employee.name || 'Unknown';
+            const displayEmail = employee.email || '-';
+            const isActive = employee.is_active;
 
             return (
-              <TableRow key={employee?.id || user?.id}>
+              <TableRow key={employee.id}>
                 <TableCell>
                   <Avatar className="h-9 w-9">
                     <AvatarFallback className="bg-primary/10 text-primary">
@@ -83,7 +82,7 @@ const EmployeeTableView: React.FC<EmployeeTableViewProps> = ({
                 </TableCell>
 
                 <TableCell className="font-medium">
-                  {employee?.employee_number || '-'}
+                  {employee.employee_number || '-'}
                 </TableCell>
 
                 <TableCell className="font-medium">
@@ -98,7 +97,7 @@ const EmployeeTableView: React.FC<EmployeeTableViewProps> = ({
                 </TableCell>
 
                 <TableCell>
-                  {employee?.org_unit && (
+                  {employee.org_unit && (
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Building2 className="h-3.5 w-3.5" />
                       <span>{employee.org_unit.name}</span>
@@ -117,8 +116,8 @@ const EmployeeTableView: React.FC<EmployeeTableViewProps> = ({
 
                 <TableCell className="text-center">
                   <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${isActive
-                      ? 'bg-primary/10 text-primary'
-                      : 'bg-muted text-muted-foreground'
+                    ? 'bg-primary/10 text-primary'
+                    : 'bg-muted text-muted-foreground'
                     }`}>
                     {isActive ? 'Aktif' : 'Tidak Aktif'}
                   </span>
@@ -133,24 +132,24 @@ const EmployeeTableView: React.FC<EmployeeTableViewProps> = ({
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       {onView && (
-                        <DropdownMenuItem onClick={() => onView(employeeWithAccount)}>
+                        <DropdownMenuItem onClick={() => onView(employee)}>
                           <Eye className="mr-2 h-4 w-4" />
                           Lihat Detail
                         </DropdownMenuItem>
                       )}
-                      <DropdownMenuItem onClick={() => onEdit(employeeWithAccount)}>
+                      <DropdownMenuItem onClick={() => onEdit(employee)}>
                         <Edit className="mr-2 h-4 w-4" />
                         Edit
                       </DropdownMenuItem>
                       {onManageRoles && (
-                        <DropdownMenuItem onClick={() => onManageRoles(employeeWithAccount)}>
+                        <DropdownMenuItem onClick={() => onManageRoles(employee)}>
                           <Shield className="mr-2 h-4 w-4" />
                           Kelola Hak Akses
                         </DropdownMenuItem>
                       )}
                       {isActive ? (
                         <DropdownMenuItem
-                          onClick={() => onDeactivate(employeeWithAccount)}
+                          onClick={() => onDeactivate(employee)}
                           className="text-orange-600 focus:text-orange-600"
                         >
                           <UserX className="mr-2 h-4 w-4" />
@@ -158,7 +157,7 @@ const EmployeeTableView: React.FC<EmployeeTableViewProps> = ({
                         </DropdownMenuItem>
                       ) : (
                         <DropdownMenuItem
-                          onClick={() => onActivate(employeeWithAccount)}
+                          onClick={() => onActivate(employee)}
                           className="text-primary focus:text-primary"
                         >
                           <UserCheck className="mr-2 h-4 w-4" />
@@ -167,7 +166,7 @@ const EmployeeTableView: React.FC<EmployeeTableViewProps> = ({
                       )}
                       {onDelete && (
                         <DropdownMenuItem
-                          onClick={() => onDelete(employeeWithAccount)}
+                          onClick={() => onDelete(employee)}
                           className="text-destructive focus:text-destructive"
                         >
                           <Trash2 className="mr-2 h-4 w-4" />
