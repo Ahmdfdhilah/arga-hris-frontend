@@ -51,7 +51,7 @@ const SidebarUserDropdown: React.FC<SidebarUserDropdownProps> = ({
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col items-start text-sm">
-                  <span className="font-medium">{getUserFullName()}</span>
+                  <span className="font-medium text-primary">{getUserFullName()}</span>
                   <span
                     className="text-xs text-muted-foreground"
                     title={userData.email || undefined}
@@ -65,7 +65,7 @@ const SidebarUserDropdown: React.FC<SidebarUserDropdownProps> = ({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
             <div className="px-2 py-1.5">
-              <p className="text-sm font-medium">{getUserFullName()}</p>
+              <p className="text-sm font-medium text-primary">{getUserFullName()}</p>
               <p
                 className="text-xs text-muted-foreground truncate"
                 title={userData.email || undefined}
@@ -75,14 +75,6 @@ const SidebarUserDropdown: React.FC<SidebarUserDropdownProps> = ({
             </div>
 
             <Separator className="my-1" />
-            {/* <DropdownMenuItem asChild>
-              <Link to="/profile" className="flex items-center gap-2">
-                <User className="h-4 w-4" />
-                <span>Profil</span>
-              </Link>
-            </DropdownMenuItem> */}
-
-            {/* <Separator className="my-1" /> */}
 
             <DropdownMenuItem
               onClick={handleLogout}

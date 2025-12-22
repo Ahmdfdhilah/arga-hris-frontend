@@ -19,7 +19,7 @@ export function useEmployeeSearch() {
     getByIdFunction,
     formatter: (employee) => ({
       value: employee.id,
-      label: `${employee.employee_number} - ${employee.name}`,
+      label: `${employee.code} - ${employee.name}`,
       description: employee.position || employee.email || undefined,
     }),
   });

@@ -13,7 +13,6 @@ interface EmployeeFormDialogProps {
   isSubmitting: boolean;
 }
 
-// Form data matches what EmployeeFormFields expects
 export interface EmployeeFormData {
   code?: string;
   first_name?: string;
@@ -43,7 +42,6 @@ const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({
   useEffect(() => {
     if (open) {
       if (employee) {
-        // Split name into first_name and last_name
         const nameParts = (employee.name || '').split(' ');
         const firstName = nameParts[0] || '';
         const lastName = nameParts.slice(1).join(' ') || '';
@@ -53,8 +51,6 @@ const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({
           first_name: firstName,
           last_name: lastName,
           email: employee.email || '',
-          // Phone is now on user object if available, or we might need to fetch it? 
-          // Assuming user is populated.
           phone: employee.user?.phone || '',
           position: employee.position || '',
           type: employee.type || undefined,
@@ -65,7 +61,6 @@ const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({
           is_active: employee.is_active ?? true,
         });
       } else {
-        // Create mode
         setFormData({
           code: '',
           first_name: '',
@@ -87,7 +82,6 @@ const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({
 
   const handleFieldChange = (field: string, value: string | number | boolean | null | undefined) => {
     setFormData((prev) => {
-      // Convert email to lowercase
       const processedValue = field === 'email' && typeof value === 'string'
         ? value.toLowerCase()
         : value;

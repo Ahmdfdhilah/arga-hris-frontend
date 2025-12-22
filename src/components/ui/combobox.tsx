@@ -4,7 +4,6 @@ import { Command as CommandPrimitive } from "cmdk"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 
-// Basic components from your existing Combobox
 const ComboboxRoot = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive>
@@ -108,6 +107,9 @@ const ComboboxList = React.forwardRef<
     ref={ref}
     className={cn("max-h-[300px] overflow-y-auto overflow-x-hidden", className)}
     onScroll={onScroll}
+    onWheel={(e) => {
+      e.stopPropagation();
+    }}
     {...props}
   />
 ))
@@ -133,7 +135,7 @@ ComboboxButton.displayName = "ComboboxButton"
 
 // New enhanced Combobox component that accepts options, value, onChange, etc.
 interface ComboboxOption {
-  value: string | number  | null
+  value: string | number | null
   label: string
   description?: string
 }
@@ -218,7 +220,7 @@ export function Combobox({
   }, [currentSearchValue])
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={setOpen} modal={false}>
       <PopoverTrigger asChild className="bg-transparent">
         <ComboboxButton className={className}>
           {selectedOption ? selectedOption.label : placeholder}

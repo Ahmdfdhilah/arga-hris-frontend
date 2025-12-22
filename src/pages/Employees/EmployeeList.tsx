@@ -49,7 +49,7 @@ import EmployeeTableView from './EmployeeTableView';
 import { EmployeeCardView } from './EmployeeCardView';
 import EmployeeFormDialog from './EmployeeFormDialog';
 import { EmployeeDetailDialog } from './EmployeeDetailDialog';
-// import { ManageRolesDialog } from './ManageRolesDialog'; // Disable for now as we focus on Employee schema alignment
+import { ManageRolesDialog } from './ManageRolesDialog';
 
 const EmployeeList: React.FC = () => {
   const { isDesktop } = useResponsive();
@@ -61,8 +61,8 @@ const EmployeeList: React.FC = () => {
   const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [employeeToView, setEmployeeToView] = useState<Employee | null>(null);
-  // const [manageRolesDialogOpen, setManageRolesDialogOpen] = useState(false);
-  // const [employeeToManageRoles, setEmployeeToManageRoles] = useState<Employee | null>(null);
+  const [manageRolesDialogOpen, setManageRolesDialogOpen] = useState(false);
+  const [employeeToManageRoles, setEmployeeToManageRoles] = useState<Employee | null>(null);
 
 
   const urlFiltersHook = useURLFilters<PaginationParams & EmployeeFilterParams>({
@@ -133,9 +133,8 @@ const EmployeeList: React.FC = () => {
   };
 
   const handleManageRoles = (employee: Employee) => {
-    // setEmployeeToManageRoles(employee);
-    // setManageRolesDialogOpen(true);
-    console.log("Manage roles not implemented yet for Employee view", employee);
+    setEmployeeToManageRoles(employee);
+    setManageRolesDialogOpen(true);
   };
 
   const handleDelete = (employee: Employee) => {
@@ -437,11 +436,11 @@ const EmployeeList: React.FC = () => {
         employee={employeeToView}
       />
 
-      {/*   <ManageRolesDialog
+      <ManageRolesDialog
         open={manageRolesDialogOpen}
         onOpenChange={setManageRolesDialogOpen}
         employee={employeeToManageRoles}
-      /> */}
+      />
 
       <ConfirmDialog
         isOpen={confirmOpen}

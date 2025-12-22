@@ -111,18 +111,14 @@ export function Filtering({
               </div>
 
               <Alert className="mb-4 border border-border bg-muted/50">
-                <div className="flex  gap-2 md:gap-3">
-                  <InfoIcon className="h-5 w-5 text-primary flex-shrink-0" />
-                  <div className="flex-1 space-y-1">
-                    <AlertTitle className="font-semibold text-primary text-sm md:text-base">
-                      Instruksi Filter
-                    </AlertTitle>
-                    <AlertDescription className="text-muted-foreground text-xs md:text-sm">
-                      Pilih filter untuk menampilkan data yang sesuai. Kombinasikan
-                      beberapa filter untuk hasil yang lebih spesifik.
-                    </AlertDescription>
-                  </div>
-                </div>
+                <InfoIcon className="h-5 w-5 text-primary mt-1" />
+                <AlertTitle className="font-semibold text-primary text-sm md:text-base">
+                  Instruksi Filter
+                </AlertTitle>
+                <AlertDescription className="text-muted-foreground text-xs md:text-sm">
+                  Pilih filter untuk menampilkan data yang sesuai. Kombinasikan
+                  beberapa filter untuk hasil yang lebih spesifik.
+                </AlertDescription>
               </Alert>
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
