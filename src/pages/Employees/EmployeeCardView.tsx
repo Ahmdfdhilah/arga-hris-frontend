@@ -1,5 +1,4 @@
-// import { useState } from 'react';
-import { MoreHorizontal, Mail, Building2, User, UserCog, Ban, CheckCircle, Trash2 } from 'lucide-react';
+import { MoreHorizontal, Mail, Building2, User, UserCog, Ban, CheckCircle, Trash2, Shield } from 'lucide-react';
 import { Employee } from '@/services/employees/types/response';
 import {
   Card,
@@ -19,7 +18,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-// import { ManageRolesDialog } from '@/pages/Users/components/ManageRolesDialog';
 import { cn } from '@/lib/utils';
 
 interface EmployeeCardViewProps {
@@ -30,8 +28,7 @@ interface EmployeeCardViewProps {
   onDeactivate: (employee: Employee) => void;
   onActivate: (employee: Employee) => void;
   onDelete: (employee: Employee) => void;
-  // onManageRoles?: (employee: Employee) => void;
-  onManageRoles?: any;
+  onManageRoles?: (employee: Employee) => void;
 }
 
 export function EmployeeCardView({
@@ -42,9 +39,8 @@ export function EmployeeCardView({
   onDeactivate,
   onActivate,
   onDelete,
-  // onManageRoles,
+  onManageRoles,
 }: EmployeeCardViewProps) {
-  // const [selectedEmployeeForRoles, setSelectedEmployeeForRoles] = useState<Employee | null>(null);
 
   if (isLoading) {
     return (
@@ -114,12 +110,12 @@ export function EmployeeCardView({
                     <UserCog className="mr-2 h-4 w-4" />
                     Edit Employee
                   </DropdownMenuItem>
-                  {/*
-                  <DropdownMenuItem onClick={() => setSelectedEmployeeForRoles(employee)}>
-                    <Key className="mr-2 h-4 w-4" />
-                    Manage Roles
-                  </DropdownMenuItem>
-                  */}
+                  {onManageRoles && (
+                    <DropdownMenuItem onClick={() => onManageRoles(employee)}>
+                      <Shield className="mr-2 h-4 w-4" />
+                      Kelola Hak Akses
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator />
                   {employee.is_active ? (
                     <DropdownMenuItem
@@ -177,17 +173,6 @@ export function EmployeeCardView({
           </Card>
         ))}
       </div>
-
-      {/*
-      {selectedEmployeeForRoles && (
-        <ManageRolesDialog
-          open={!!selectedEmployeeForRoles}
-          onOpenChange={(open) => !open && setSelectedEmployeeForRoles(null)}
-          employee={selectedEmployeeForRoles}
-          userId={selectedEmployeeForRoles.account?.id}
-        />
-      )}
-      */}
     </>
   );
 }

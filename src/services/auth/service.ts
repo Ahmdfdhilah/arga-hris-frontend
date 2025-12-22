@@ -30,7 +30,7 @@ class AuthService extends BaseService {
    * Logout from this client
    * POST {SSO_URL}/auth/logout/client
    */
-  async logout(accessToken?: string): Promise<void> {
+  async logout(accessToken?: string, deviceId?: string): Promise<void> {
     const { API_BASE_URL_SSO, CLIENT_ID } = await import('@/config');
     const axios = (await import('axios')).default;
 
@@ -48,13 +48,25 @@ class AuthService extends BaseService {
 
     if (!token) return;
 
+    let device = deviceId;
+    if (!device) {
+      try {
+        device = localStorage.getItem('persist:root')
+          ? JSON.parse(JSON.parse(localStorage.getItem('persist:root') || '{}').auth || '{}').deviceId
+          : null;
+      } catch (e) {
+        // Ignore parse errors
+      }
+    }
+
     await axios.post(
       `${API_BASE_URL_SSO}/auth/logout/client`,
       {},
       {
         headers: {
           'Authorization': `Bearer ${token}`,
-          'X-Client-ID': CLIENT_ID
+          'X-Client-ID': CLIENT_ID,
+          'X-Device-ID': device || 'ARGA-HRIS',
         }
       }
     );

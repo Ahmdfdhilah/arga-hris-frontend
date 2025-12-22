@@ -12,6 +12,7 @@ export type { CurrentUser };
 interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
+  deviceId: string | null;
   userData: CurrentUser | null;
   isAuthenticated: boolean;
   loading: boolean;
@@ -21,6 +22,7 @@ interface AuthState {
 const initialState: AuthState = {
   accessToken: null,
   refreshToken: null,
+  deviceId: null,
   userData: null,
   isAuthenticated: false,
   loading: false,
@@ -87,8 +89,9 @@ export const logout = createAsyncThunk(
     try {
       const state = getState() as { auth: AuthState };
       const token = state.auth.accessToken;
+      const deviceId = state.auth.deviceId;
       if (token) {
-        await authService.logout(token);
+        await authService.logout(token, deviceId || undefined);
       }
       return null;
     } catch (error: any) {
@@ -117,17 +120,16 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setTokens: (state, action: PayloadAction<{ accessToken: string; refreshToken: string }>) => {
-      console.log('[authSlice] setTokens - clearing old tokens and setting new ones');
-      console.log('[authSlice] Old refresh token:', state.refreshToken ? state.refreshToken.substring(0, 20) + '...' : 'none');
-      console.log('[authSlice] New refresh token:', action.payload.refreshToken.substring(0, 20) + '...');
+    setTokens: (state, action: PayloadAction<{ accessToken: string; refreshToken: string; deviceId?: string }>) => {
 
       // Clear any existing tokens first to prevent stale token issues
       state.accessToken = null;
       state.refreshToken = null;
+      state.deviceId = null;
       // Set new tokens
       state.accessToken = action.payload.accessToken;
       state.refreshToken = action.payload.refreshToken;
+      state.deviceId = action.payload.deviceId || null;
       state.isAuthenticated = true;
       state.error = null;
     },
@@ -137,6 +139,7 @@ const authSlice = createSlice({
     clearAuth: (state) => {
       state.accessToken = null;
       state.refreshToken = null;
+      state.deviceId = null;
       state.userData = null;
       state.isAuthenticated = false;
       state.error = null;

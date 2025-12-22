@@ -9,7 +9,7 @@ interface AuthProviderProps {
 }
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
-  const { isAuthenticated, accessToken } = useAppSelector((state: RootState ) => state.auth);
+  const { isAuthenticated, accessToken } = useAppSelector((state: RootState) => state.auth);
   const [initializing, setInitializing] = useState(true);
   const dispatch = useAppDispatch();
   const location = useLocation();
@@ -22,11 +22,13 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         const urlParams = new URLSearchParams(window.location.search);
         const ssoToken = urlParams.get('sso_token');
         const refreshTokenValue = urlParams.get('refresh_token');
+        const deviceIdValue = urlParams.get('device_id');
 
         // Check if we have SSO tokens in the URL
         if (ssoToken && refreshTokenValue) {
           console.log('[AuthProvider] SSO token detected in URL');
           console.log('[AuthProvider] SSO refresh token:', refreshTokenValue.substring(0, 20) + '...');
+          console.log('[AuthProvider] Device ID:', deviceIdValue || 'not provided');
           console.log('[AuthProvider] Current auth state - isAuthenticated:', isAuthenticated, 'has accessToken:', !!accessToken);
 
           // If we're already authenticated with the same token, just clean the URL
@@ -47,14 +49,15 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
               // Even if not authenticated, pause to set new tokens cleanly
               persistor.pause();
             }
-            
+
             console.log('[AuthProvider] Setting new tokens from SSO');
-            // Set new tokens
+            // Set new tokens including device_id
             dispatch(setTokens({
               accessToken: ssoToken,
-              refreshToken: refreshTokenValue
+              refreshToken: refreshTokenValue,
+              deviceId: deviceIdValue || undefined
             }));
-            
+
             // Resume and flush to persist new tokens
             persistor.persist();
             await persistor.flush();

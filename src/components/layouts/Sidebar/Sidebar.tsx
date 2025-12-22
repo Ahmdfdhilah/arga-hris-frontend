@@ -78,11 +78,8 @@ const Sidebar: React.FC<SidebarProps> = ({
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      // Clear Redux state
       dispatch(clearAuth());
-      // Purge persist to ensure localStorage is cleared
       persistor.purge();
-      // Redirect after clearing
       window.location.href = `${SSO_DASHBOARD_URL}/login?logout=true`;
     }
     return null;
