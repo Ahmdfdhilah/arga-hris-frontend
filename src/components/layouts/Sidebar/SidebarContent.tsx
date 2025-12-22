@@ -1,5 +1,5 @@
 import { MenuItem } from '@/lib/menus';
-import type { CurrentUser } from '@/redux/features/authSlice';
+import type { CurrentUser } from '@/stores/authStore';
 import SidebarLogo from './SidebarLogo';
 import SidebarMenu from './SidebarMenu';
 import SidebarUserDropdown from './SidebarUserDropdown';

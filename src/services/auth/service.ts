@@ -4,7 +4,6 @@ import type { CurrentUser } from './types';
 
 /**
  * Auth Service Class
- * HRIS v2 - Hanya menyediakan endpoint /auth/me
  * Untuk logout dan token management, gunakan SSO Service
  */
 class AuthService extends BaseService {

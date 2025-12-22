@@ -43,13 +43,13 @@ import type { PaginationParams } from '@/services/base/types';
 import { ATTENDANCE_STATUS_OPTIONS, ATTENDANCE_FILTER_TYPE_OPTIONS } from '@/services/attendances/types';
 import { useEmployeeSearch } from '@/hooks/useEmployeeSearch';
 import { useOrgUnitSearch } from '@/hooks/useOrgUnitSearch';
-import { useAppSelector } from '@/redux/hooks';
+import { useAuthStore } from '@/stores/authStore';
 import { hasPermission } from '@/services/users/utils';
 
 const AttendanceList: React.FC = () => {
   const { isDesktop } = useResponsive();
 
-  const { userData } = useAppSelector((state) => state.auth);
+  const { userData } = useAuthStore();
 
   const canMarkPresent = hasPermission(userData, 'attendance.update');
 
@@ -145,7 +145,7 @@ const AttendanceList: React.FC = () => {
         actions={
           <Button onClick={handleBulkMarkPresent}>
             <CalendarCheck className="mr-2 h-4 w-4" />
-           Tandai Hadir Semua Pegawai
+            Tandai Hadir Semua Pegawai
           </Button>
         }
       />

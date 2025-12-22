@@ -13,7 +13,7 @@ import { ItemGroup } from '@/components/ui/item';
 import { Spinner } from '@/components/common';
 import { PageHeader } from '@/components/common/Header';
 import { Filtering } from '@/components/common/Filtering';
-import { useAppSelector } from '@/redux/hooks';
+import { useAuthStore } from '@/stores/authStore';
 import { hasPermission } from '@/services/users/utils';
 
 import { useResponsive } from '@/hooks/useResponsive';
@@ -57,7 +57,7 @@ const OrgUnitList: React.FC = () => {
   const [orgUnitToView, setOrgUnitToView] = useState<OrgUnit | null>(null);
 
   // Get current user from Redux store
-  const { userData } = useAppSelector((state) => state.auth);
+  const { userData } = useAuthStore();
 
   // Check permissions
   const canCreate = hasPermission(userData, 'org_units:write');

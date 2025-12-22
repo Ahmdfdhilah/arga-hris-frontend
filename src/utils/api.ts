@@ -1,8 +1,7 @@
 // src/utils/api.ts
 import axios, { AxiosInstance } from 'axios';
 import { API_BASE_URL_SSO, API_BASE_URL_HRIS } from '@/config';
-import { refreshToken, clearAuth } from '@/redux/features/authSlice';
-import { store } from '@/redux/store';
+import { useAuthStore } from '@/stores/authStore';
 import { jwtDecode } from 'jwt-decode';
 import { handleApiError } from './errorHandler';
 
@@ -53,24 +52,18 @@ const configureInterceptors = (api: AxiosInstance) => {
   // Request interceptor
   api.interceptors.request.use(
     async (config) => {
+      const { accessToken, refreshToken: refreshTokenFn, clearAuth } = useAuthStore.getState();
 
-      const state = store.getState();
-      const token = state.auth?.accessToken;
-
-      console.log('[API Interceptor Request] Token:', token ? 'exists' : 'missing');
-
-      if (!token) {
+      if (!accessToken) {
         return config;
       }
 
       // Check if token is expired or about to expire
-      if (isTokenExpiredOrExpiringSoon(token)) {
-        console.log('[API Interceptor Request] Token expired/expiring, need refresh');
+      if (isTokenExpiredOrExpiringSoon(accessToken)) {
         let newToken;
 
         // If we're already refreshing, wait for that to finish
         if (isRefreshing) {
-          console.log('[API Interceptor Request] Already refreshing, waiting...');
           try {
             newToken = await new Promise((resolve, reject) => {
               pendingRequests.push({ resolve, reject });
@@ -82,23 +75,21 @@ const configureInterceptors = (api: AxiosInstance) => {
         } else {
           // Start a refresh
           isRefreshing = true;
-          console.log('[API Interceptor Request] Starting token refresh...');
 
           try {
-            const refreshTokenValue = state.auth?.refreshToken;
-            console.log('[API Interceptor Request] Using refresh token:', refreshTokenValue?.substring(0, 20) + '...');
-            
-            const refreshResult = await store.dispatch(refreshToken()).unwrap();
-            newToken = refreshResult.access_token;
-            config.headers.Authorization = `Bearer ${newToken}`;
-
-            console.log('[API Interceptor Request] Token refreshed successfully');
-            // Notify pending requests of the new token
-            processPendingRequests(false, newToken);
+            const success = await refreshTokenFn();
+            if (success) {
+              const { accessToken: newAccessToken } = useAuthStore.getState();
+              newToken = newAccessToken;
+              config.headers.Authorization = `Bearer ${newToken}`;
+              // Notify pending requests of the new token
+              processPendingRequests(false, newToken || undefined);
+            } else {
+              throw new Error('Token refresh failed');
+            }
           } catch (error) {
-            console.error('[API Interceptor Request] Token refresh failed:', error);
             processPendingRequests(true);
-            store.dispatch(clearAuth());
+            clearAuth();
             return Promise.reject(new Error('Session expired. Please login again.'));
           } finally {
             isRefreshing = false;
@@ -106,8 +97,7 @@ const configureInterceptors = (api: AxiosInstance) => {
         }
       } else {
         // Token is still valid
-        console.log('[API Interceptor Request] Token still valid');
-        config.headers.Authorization = `Bearer ${token}`;
+        config.headers.Authorization = `Bearer ${accessToken}`;
       }
 
       return config;
@@ -124,6 +114,8 @@ const configureInterceptors = (api: AxiosInstance) => {
       // If error is 401 and we haven't tried to refresh the token yet
       if (error.response?.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
+
+        const { refreshToken: refreshTokenFn, clearAuth } = useAuthStore.getState();
 
         // If a refresh is already in progress, wait for it
         if (isRefreshing) {
@@ -142,25 +134,24 @@ const configureInterceptors = (api: AxiosInstance) => {
         isRefreshing = true;
 
         try {
-          const state = store.getState();
-          if (!state.auth.refreshToken) {
-            throw new Error('No refresh token available');
+          const success = await refreshTokenFn();
+          if (!success) {
+            throw new Error('Token refresh failed');
           }
 
-          const refreshResult = await store.dispatch(refreshToken()).unwrap();
-          const newToken = refreshResult.access_token;
+          const { accessToken: newAccessToken } = useAuthStore.getState();
 
           // Update the auth header and retry
-          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
           // Process any pending requests
-          processPendingRequests(false, newToken);
+          processPendingRequests(false, newAccessToken || undefined);
 
           return api(originalRequest);
         } catch (error) {
           processPendingRequests(true);
           // Clear auth state if refresh fails
-          store.dispatch(clearAuth());
+          clearAuth();
           return Promise.reject(new Error('Session expired. Please login again.'));
         } finally {
           isRefreshing = false;

@@ -1,7 +1,6 @@
 import { ReactNode, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
-import { clearAuth, verifyAndFetchUserData } from '@/redux/features/authSlice';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { useAuthStore } from '@/stores/authStore';
 import { CLIENT_ID, SSO_DASHBOARD_URL } from '@/config';
 import { canAccessMenu } from '@/services/users/utils';
 
@@ -18,31 +17,28 @@ const AuthGuard = ({
   requireAll = false,
   fallbackPath = '/unauthorized',
 }: AuthGuardProps) => {
-  const { isAuthenticated, accessToken, loading, userData } = useAppSelector(
-    (state) => state.auth
-  );
-  const dispatch = useAppDispatch();
+  const { isAuthenticated, accessToken, loading, userData, clearAuth, verifyAndFetchUserData } = useAuthStore();
 
   useEffect(() => {
     const checkAuth = async () => {
       if (accessToken && !userData && !loading) {
         try {
-          await dispatch(verifyAndFetchUserData()).unwrap();
+          await verifyAndFetchUserData();
         } catch (error) {
-          dispatch(clearAuth());
+          clearAuth();
           window.location.href = `${SSO_DASHBOARD_URL}/login?client_id=${CLIENT_ID}`;
         }
       } else if (
         (!accessToken && isAuthenticated) ||
         (!accessToken && !isAuthenticated)
       ) {
-        dispatch(clearAuth());
+        clearAuth();
         window.location.href = `${SSO_DASHBOARD_URL}/login?client_id=${CLIENT_ID}`;
       }
     };
 
     checkAuth();
-  }, [accessToken, userData, loading, isAuthenticated, dispatch]);
+  }, [accessToken, userData, loading, isAuthenticated]);
 
   if (!isAuthenticated || !userData) {
     const ssoLoginUrl = `${SSO_DASHBOARD_URL}/login?client_id=${CLIENT_ID}`;

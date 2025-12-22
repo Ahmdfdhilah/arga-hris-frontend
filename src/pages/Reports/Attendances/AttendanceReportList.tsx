@@ -23,7 +23,7 @@ import {
 } from '@/components/common';
 import { PageHeader } from '@/components/common/Header';
 import Filtering from '@/components/common/Filtering';
-import { useAppSelector } from '@/redux/hooks';
+import { useAuthStore } from '@/stores/authStore';
 import { hasPermission } from '@/services/users/utils';
 
 import { OverviewCardView } from './OverviewCardView';
@@ -51,7 +51,7 @@ const AttendanceReportList: React.FC = () => {
   const [isExporting, setIsExporting] = useState(false);
 
   // Get current user from Redux store
-  const { userData } = useAppSelector((state) => state.auth);
+  const { userData } = useAuthStore();
 
   const canExport = hasPermission(userData, 'attendance.export');
 

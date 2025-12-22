@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useAppSelector } from '@/redux/hooks';
+import { useAuthStore } from '@/stores/authStore';
 import { hasAnyRole } from '@/services/users/utils';
 import type { UseQueryResult } from '@tanstack/react-query';
 
@@ -11,29 +11,29 @@ export interface RoleBasedQueryConfig<TAdminFilters, TTeamFilters> {
    * All filters including admin-only filters
    */
   adminFilters: TAdminFilters;
-  
+
   /**
    * Function to extract team-only filters from admin filters
    * Should remove admin-only filters like employee_id, org_unit_id, type, etc.
    */
   getTeamFilters: (adminFilters: TAdminFilters) => TTeamFilters;
-  
+
   /**
    * Hook for admin query (full access)
    */
   useAdminQuery: (filters: TAdminFilters, options?: any) => UseQueryResult<any, Error>;
-  
+
   /**
    * Hook for team query (subordinates only)
    */
   useTeamQuery: (filters: TTeamFilters, options?: any) => UseQueryResult<any, Error>;
-  
+
   /**
    * Optional: Custom role check logic
    * Default: checks for hr_admin or super_admin
    */
   isAdminRole?: (roles: string[]) => boolean;
-  
+
   /**
    * Optional: Custom role check for team access
    * Default: checks for org_unit_head
@@ -49,12 +49,12 @@ export interface RoleBasedQueryResult<TData = any> {
    * Whether to use team fetch (true) or admin fetch (false)
    */
   shouldUseTeamFetch: boolean;
-  
+
   /**
    * Combined query result from either admin or team query
    */
   query: UseQueryResult<TData, Error>;
-  
+
   /**
    * Current user data from Redux store
    */
@@ -85,8 +85,8 @@ export interface RoleBasedQueryResult<TData = any> {
 export function useRoleBasedQuery<TAdminFilters = any, TTeamFilters = any, TData = any>(
   config: RoleBasedQueryConfig<TAdminFilters, TTeamFilters>
 ): RoleBasedQueryResult<TData> {
-  const { userData } = useAppSelector((state) => state.auth);
-  
+  const { userData } = useAuthStore();
+
   const {
     adminFilters,
     getTeamFilters,
@@ -102,10 +102,10 @@ export function useRoleBasedQuery<TAdminFilters = any, TTeamFilters = any, TData
    */
   const shouldUseTeamFetch = useMemo(() => {
     if (!userData?.roles) return false;
-    
+
     // If user has admin role, always use full list (admin access)
     if (isAdminRole(userData.roles)) return false;
-    
+
     // If user only has team role (and not admin), use team fetch
     return isTeamRole(userData.roles);
   }, [userData?.roles, isAdminRole, isTeamRole]);
@@ -124,7 +124,7 @@ export function useRoleBasedQuery<TAdminFilters = any, TTeamFilters = any, TData
   const adminQuery = useAdminQuery(adminFilters, {
     enabled: !shouldUseTeamFetch,
   });
-  
+
   const teamQuery = useTeamQuery(teamFilters, {
     enabled: shouldUseTeamFetch,
   });

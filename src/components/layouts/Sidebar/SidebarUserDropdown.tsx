@@ -9,7 +9,7 @@ import {
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
-import type { CurrentUser } from '@/redux/features/authSlice';
+import type { CurrentUser } from '@/stores/authStore';
 
 interface SidebarUserDropdownProps {
   userData: CurrentUser;

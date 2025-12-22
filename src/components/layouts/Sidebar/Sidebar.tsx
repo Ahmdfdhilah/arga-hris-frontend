@@ -1,8 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { useAppSelector, useAppDispatch } from '@/redux/hooks';
-import { logout, clearAuth } from '@/redux/features/authSlice';
-import { persistor } from '@/redux/store';
+import { useAuthStore } from '@/stores/authStore';
 import { SSO_DASHBOARD_URL } from '@/config';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
@@ -25,12 +23,11 @@ const Sidebar: React.FC<SidebarProps> = ({
   setIsSidebarOpen,
 }) => {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const location = useLocation();
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  const { userData, isAuthenticated } = useAppSelector((state) => state.auth);
+  const { userData, isAuthenticated, logout, clearAuth } = useAuthStore();
 
   useEffect(() => {
     const currentPath = location.pathname;
@@ -74,15 +71,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const handleLogout = async () => {
     try {
-      await dispatch(logout()).unwrap();
+      await logout();
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      dispatch(clearAuth());
-      persistor.purge();
+      clearAuth();
       window.location.href = `${SSO_DASHBOARD_URL}/login?logout=true`;
     }
-    return null;
   };
 
   const handleMenuClick = (menu: MenuItem) => {

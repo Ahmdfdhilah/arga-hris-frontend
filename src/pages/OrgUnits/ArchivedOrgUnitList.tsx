@@ -20,7 +20,7 @@ import { PageHeader } from '@/components/common/Header';
 import { Filtering } from '@/components/common/Filtering';
 import { Pagination } from '@/components/common';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
-import { useAppSelector } from '@/redux/hooks';
+import { useAuthStore } from '@/stores/authStore';
 import { hasPermission } from '@/services/users/utils';
 import {
   Table,
@@ -46,7 +46,7 @@ const ArchivedOrgUnitList: React.FC = () => {
   const [orgUnitToView, setOrgUnitToView] = useState<OrgUnit | null>(null);
 
   // Get current user from Redux store
-  const { userData } = useAppSelector((state) => state.auth);
+  const { userData } = useAuthStore();
 
   // Check permissions
   const canRestore = hasPermission(userData, 'org_units:restore');

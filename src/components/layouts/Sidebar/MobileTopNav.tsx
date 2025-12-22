@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
-import type { CurrentUser } from '@/redux/features/authSlice';
+import type { CurrentUser } from '@/stores/authStore';
 
 interface MobileTopNavProps {
   userData: CurrentUser;

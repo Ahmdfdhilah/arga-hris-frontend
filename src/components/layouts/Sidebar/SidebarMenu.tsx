@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/accordion';
 import { MenuItem } from '@/lib/menus';
 import { canAccessMenu } from '@/services/users/utils';
-import type { CurrentUser } from '@/redux/features/authSlice';
+import type { CurrentUser } from '@/stores/authStore';
 
 interface SidebarMenuProps {
   accessibleMenus: MenuItem[];

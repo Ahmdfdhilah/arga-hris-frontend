@@ -1,11 +1,8 @@
 import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { toggleTheme, setTheme } from '@/redux/features/themeSlice';
-import { RootState } from '@/redux/store';
+import { useThemeStore } from '@/stores/themeStore';
 
 export const useTheme = () => {
-  const dispatch = useAppDispatch();
-  const isDarkMode = useAppSelector((state: RootState) => state.theme.isDarkMode);
+  const { isDarkMode, toggleTheme, setTheme } = useThemeStore();
 
   useEffect(() => {
     // Update document class when theme changes
@@ -18,7 +15,7 @@ export const useTheme = () => {
 
   return {
     isDarkMode,
-    toggleTheme: () => dispatch(toggleTheme()),
-    setDarkMode: (value: boolean) => dispatch(setTheme(value))
+    toggleTheme,
+    setDarkMode: setTheme
   };
 };

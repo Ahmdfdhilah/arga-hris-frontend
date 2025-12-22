@@ -15,7 +15,7 @@ import {
   Spinner,
   PageHeader,
   Filtering,
-  Pagination ,
+  Pagination,
   ConfirmDialog,
   Field,
   FieldContent,
@@ -34,7 +34,7 @@ import { useResponsive } from '@/hooks/useResponsive';
 import { useURLFilters } from '@/hooks/useURLFilters';
 import { useEmployeeSearch } from '@/hooks/useEmployeeSearch';
 import { useRoleBasedQuery } from '@/hooks/useRoleBasedQuery';
-import { useAppSelector } from '@/redux/hooks';
+import { useAuthStore } from '@/stores/authStore';
 import { hasPermission } from '@/services/users/utils';
 import {
   useLeaveRequests,
@@ -65,7 +65,7 @@ const LeaveRequestList: React.FC = () => {
   const [leaveRequestToDelete, setLeaveRequestToDelete] =
     useState<LeaveRequestWithEmployee | null>(null);
 
-  const { userData } = useAppSelector((state) => state.auth);
+  const { userData } = useAuthStore();
 
   const canCreate = hasPermission(userData, 'leave:write');
   const canUpdate = hasPermission(userData, 'leave:update');
