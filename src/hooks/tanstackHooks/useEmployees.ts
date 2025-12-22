@@ -192,6 +192,12 @@ export const useDeleteEmployee = (
     onSuccess: (response, variables, context, _mutation) => {
       queryClient.invalidateQueries({ queryKey: employeesKeys.lists() });
       queryClient.invalidateQueries({ queryKey: employeesKeys.detail(variables) });
+      queryClient.invalidateQueries({
+        predicate: (query) =>
+          Array.isArray(query.queryKey) &&
+          query.queryKey[0] === 'employees' &&
+          query.queryKey[1] === 'deleted'
+      });
       toast.success('Karyawan berhasil dihapus');
       onSuccess?.(response, variables, context, _mutation);
     },
@@ -220,7 +226,13 @@ export const useRestoreEmployee = (
     mutationFn: (id: number) => employeesService.restoreEmployee(id),
     onSuccess: (response, variables, context, _mutation) => {
       queryClient.invalidateQueries({ queryKey: employeesKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: employeesKeys.deleted() });
+      queryClient.invalidateQueries({
+        predicate: (query) =>
+          Array.isArray(query.queryKey) &&
+          query.queryKey[0] === 'employees' &&
+          query.queryKey[1] === 'deleted'
+      });
+      queryClient.invalidateQueries({ queryKey: employeesKeys.detail(variables) });
       toast.success('Karyawan berhasil direstore');
       onSuccess?.(response, variables, context, _mutation);
     },
