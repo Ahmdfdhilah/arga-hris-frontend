@@ -1,20 +1,28 @@
 import type { BaseEntity } from '../../base/types';
 
 export interface Employee extends BaseEntity {
-  employee_number: string;
+  user_id: string | null;
+  code: string;
   name: string;
   email: string | null;
-  phone: string | null;
   position: string | null;
-  employee_type?: string | null;
-  employee_gender?: string | null;
+  site: string | null;
+  type: string | null;
   org_unit_id: number | null;
-  user_id: number | null;
   supervisor_id: number | null;
-  employee_metadata?: Record<string, string> | null;
+  metadata?: Record<string, string> | null;
   is_active: boolean;
   deleted_at?: string | null;
-  deleted_by?: number | null;
+  deleted_by?: string | null;
+  user?: {
+    id: string;
+    name: string;
+    email: string | null;
+    phone: string | null;
+    gender: string | null;
+    avatar_path: string | null;
+    is_active: boolean;
+  } | null;
   org_unit?: {
     id: number;
     code: string;
@@ -23,9 +31,16 @@ export interface Employee extends BaseEntity {
   } | null;
   supervisor?: {
     id: number;
-    employee_number: string;
+    code: string;
     name: string;
     position: string | null;
+    user?: {
+      id: string;
+      name: string;
+      email: string | null;
+      phone: string | null;
+      avatar_path: string | null;
+    } | null;
   } | null;
 }
 

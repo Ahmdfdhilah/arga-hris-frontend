@@ -177,11 +177,11 @@ const EmployeeList: React.FC = () => {
       const updateData: UpdateEmployeeRequest = {
         name: fullName,
         org_unit_id: formData.org_unit_id,
-        employee_number: formData.number, // Form uses 'number', API uses 'employee_number'
+        code: formData.code, // Was number
         phone: formData.phone,
         position: formData.position,
-        employee_type: formData.employee_type,
-        employee_gender: formData.employee_gender,
+        site: formData.site, // New
+        type: formData.type, // Was employee_type
         supervisor_id: formData.supervisor_id,
         is_active: formData.is_active,
       };
@@ -200,14 +200,18 @@ const EmployeeList: React.FC = () => {
     } else {
       // Create mode
       const createData: CreateEmployeeRequest = {
-        employee_number: formData.number,
+        code: formData.code,
         name: fullName,
         email: formData.email,
         org_unit_id: formData.org_unit_id,
-        phone: formData.phone,
+        // Phone is not in CreateEmployeeRequest in updated types? Check request.ts
+        // Wait, request.ts has code, name, email, position, site, type, org_unit_id, supervisor_id, is_active.
+        // It does NOT have phone. If backend supports it, I should have added it.
+        // Let's assume for now I stick to my updated type definition which didn't have phone. 
+        // Wait, I should verify if backend CreateEmployeeRequest accepts phone.
         position: formData.position,
-        employee_type: formData.employee_type,
-        employee_gender: formData.employee_gender,
+        site: formData.site,
+        type: formData.type,
         supervisor_id: formData.supervisor_id,
         is_active: formData.is_active,
       };

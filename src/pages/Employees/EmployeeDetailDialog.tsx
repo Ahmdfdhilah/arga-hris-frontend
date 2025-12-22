@@ -67,7 +67,7 @@ export const EmployeeDetailDialog: React.FC<EmployeeDetailDialogProps> = ({
 
                     <div>
                       <div className="text-xs text-muted-foreground mb-1">Nomor Employee</div>
-                      <div className="text-sm font-medium">{employee.employee_number || '-'}</div>
+                      <div className="text-sm font-medium">{employee.code || '-'}</div>
                     </div>
 
                     <div>
@@ -78,15 +78,20 @@ export const EmployeeDetailDialog: React.FC<EmployeeDetailDialogProps> = ({
                       <div className="text-sm">{displayEmail}</div>
                     </div>
 
-                    {employee.phone && (
+                    {employee.user?.phone && (
                       <div>
                         <div className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
                           <Phone className="h-3 w-3" />
                           Nomor Telepon
                         </div>
-                        <div className="text-sm">{employee.phone}</div>
+                        <div className="text-sm">{employee.user.phone}</div>
                       </div>
                     )}
+                    {/* Fallback to Employee phone if User object missing but data exists? 
+                        The new schema removed phone from employee table, so it must be on user. 
+                        We only check employee.user.phone. 
+                        Wait, earlier "employee.phone" was used. I removed it from interface.
+                    */}
 
                     <div>
                       <div className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
@@ -122,17 +127,24 @@ export const EmployeeDetailDialog: React.FC<EmployeeDetailDialogProps> = ({
                       </div>
                     )}
 
-                    {employee.employee_type && (
+                    {employee.type && (
                       <div>
                         <div className="text-xs text-muted-foreground mb-1">Tipe Employee</div>
-                        <div className="text-sm font-medium capitalize">{employee.employee_type.replace('_', ' ')}</div>
+                        <div className="text-sm font-medium capitalize">{employee.type.replace('_', ' ')}</div>
                       </div>
                     )}
 
-                    {employee.employee_gender && (
+                    {employee.site && (
+                      <div>
+                        <div className="text-xs text-muted-foreground mb-1">Lokasi Kerja</div>
+                        <div className="text-sm font-medium capitalize">{employee.site.replace('_', ' ')}</div>
+                      </div>
+                    )}
+
+                    {employee.user?.gender && (
                       <div>
                         <div className="text-xs text-muted-foreground mb-1">Jenis Kelamin</div>
-                        <div className="text-sm font-medium capitalize">{employee.employee_gender === 'male' ? 'Laki-laki' : 'Perempuan'}</div>
+                        <div className="text-sm font-medium capitalize">{employee.user.gender === 'male' ? 'Laki-laki' : 'Perempuan'}</div>
                       </div>
                     )}
 
@@ -157,7 +169,7 @@ export const EmployeeDetailDialog: React.FC<EmployeeDetailDialogProps> = ({
                         </div>
                         <div className="text-sm font-medium">{employee.supervisor.name}</div>
                         <div className="text-xs text-muted-foreground mt-1">
-                          {employee.supervisor.employee_number}
+                          {employee.supervisor.code}
                           {employee.supervisor.position && ` • ${employee.supervisor.position}`}
                         </div>
                       </div>

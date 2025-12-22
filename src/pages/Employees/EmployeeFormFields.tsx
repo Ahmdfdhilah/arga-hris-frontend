@@ -30,19 +30,19 @@ import { useOrgUnitSearch } from '@/hooks/useOrgUnitSearch';
 import {
   EMPLOYEE_TYPE_OPTIONS,
   EMPLOYEE_GENDER_OPTIONS,
-  type EmployeeType,
-  type EmployeeGender,
+  EMPLOYEE_SITE_OPTIONS,
 } from '@/services/employees/types';
 
 export interface EmployeeFormData {
-  number?: string;
+  code?: string;
   first_name?: string;
   last_name?: string;
   email?: string;
   phone?: string;
   position?: string;
-  employee_type?: EmployeeType;
-  employee_gender?: EmployeeGender;
+  type?: string;
+  site?: string;
+  gender?: string;
   org_unit_id?: number;
   supervisor_id?: number;
   is_active?: boolean;
@@ -82,13 +82,13 @@ const EmployeeFormFields: React.FC<EmployeeFormFieldsProps> = ({
                 <Hash className="h-4 w-4 text-muted-foreground" />
               </InputGroupAddon>
               <InputGroupInput
-                value={formData.number || ''}
-                onChange={(e) => onChange('number', e.target.value)}
+                value={formData.code || ''}
+                onChange={(e) => onChange('code', e.target.value)}
                 placeholder="Contoh: EMP001"
               />
             </InputGroup>
           </FieldContent>
-          {errors.number && <FieldError>{errors.number}</FieldError>}
+          {errors.code && <FieldError>{errors.code}</FieldError>}
         </Field>
       )}
 
@@ -195,7 +195,7 @@ const EmployeeFormFields: React.FC<EmployeeFormFieldsProps> = ({
         {errors.position && <FieldError>{errors.position}</FieldError>}
       </Field>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <Field>
           <FieldLabel>Tipe Karyawan</FieldLabel>
           <FieldContent>
@@ -205,11 +205,11 @@ const EmployeeFormFields: React.FC<EmployeeFormFieldsProps> = ({
               </InputGroupAddon>
               <div className="flex-1">
                 <Select
-                  value={formData.employee_type || ''}
-                  onValueChange={(value) => onChange('employee_type', value)}
+                  value={formData.type || ''}
+                  onValueChange={(value) => onChange('type', value)}
                 >
                   <SelectTrigger className="border-0 shadow-none focus:ring-0">
-                    <SelectValue placeholder="Pilih tipe karyawan..." />
+                    <SelectValue placeholder="Pilih tipe..." />
                   </SelectTrigger>
                   <SelectContent>
                     {EMPLOYEE_TYPE_OPTIONS.map((option) => (
@@ -222,7 +222,36 @@ const EmployeeFormFields: React.FC<EmployeeFormFieldsProps> = ({
               </div>
             </InputGroup>
           </FieldContent>
-          {errors.employee_type && <FieldError>{errors.employee_type}</FieldError>}
+          {errors.type && <FieldError>{errors.type}</FieldError>}
+        </Field>
+
+        <Field>
+          <FieldLabel>Lokasi Kerja</FieldLabel>
+          <FieldContent>
+            <InputGroup>
+              <InputGroupAddon align="inline-start">
+                <Building2 className="h-4 w-4 text-muted-foreground" />
+              </InputGroupAddon>
+              <div className="flex-1">
+                <Select
+                  value={formData.site || ''}
+                  onValueChange={(value) => onChange('site', value)}
+                >
+                  <SelectTrigger className="border-0 shadow-none focus:ring-0">
+                    <SelectValue placeholder="Pilih lokasi..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {EMPLOYEE_SITE_OPTIONS.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </InputGroup>
+          </FieldContent>
+          {errors.site && <FieldError>{errors.site}</FieldError>}
         </Field>
 
         <Field>
@@ -234,8 +263,8 @@ const EmployeeFormFields: React.FC<EmployeeFormFieldsProps> = ({
               </InputGroupAddon>
               <div className="flex-1">
                 <Select
-                  value={formData.employee_gender || ''}
-                  onValueChange={(value) => onChange('employee_gender', value)}
+                  value={formData.gender || ''}
+                  onValueChange={(value) => onChange('gender', value)}
                 >
                   <SelectTrigger className="border-0 shadow-none focus:ring-0">
                     <SelectValue placeholder="Pilih jenis kelamin..." />
@@ -251,7 +280,7 @@ const EmployeeFormFields: React.FC<EmployeeFormFieldsProps> = ({
               </div>
             </InputGroup>
           </FieldContent>
-          {errors.employee_gender && <FieldError>{errors.employee_gender}</FieldError>}
+          {errors.gender && <FieldError>{errors.gender}</FieldError>}
         </Field>
       </div>
 

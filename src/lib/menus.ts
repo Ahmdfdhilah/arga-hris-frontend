@@ -5,7 +5,6 @@ import {
   Calendar,
   CalendarClock,
   BarChart3,
-  // DraftingCompass
 } from 'lucide-react';
 import { SSO_DASHBOARD_URL } from '../config';
 
@@ -21,81 +20,55 @@ export interface MenuItem {
 }
 
 export const hrisMenus: MenuItem[] = [
-   {
+  {
     title: 'Home',
     path: SSO_DASHBOARD_URL,
     icon: Home,
-    permissions: [],
+    permissions: ['dashboard:read'],
   },
   {
     title: 'Kehadiran',
     path: '/attendances',
     icon: Calendar,
-    permissions: ['attendance.read', 'attendance.read_own'],
+    permissions: ['attendance:read'],
     subMenus: [
       {
         title: 'Rekap Kehadiran',
         path: '/attendances/list',
-        permissions: ['attendance.read'],
+        permissions: ['attendance:read_all'],
         roles: ['super_admin', 'hr_admin', 'org_unit_head'],
         requireAllRoles: false,
       },
       {
         title: 'Kehadiran Saya',
         path: '/attendances/my-attendance',
-        permissions: ['attendance.read_own'],
+        permissions: ['attendance:read'],
       },
       {
         title: 'Absen Kehadiran',
         path: '/attendances/check-in-out',
-        permissions: ['attendance.read_own', 'attendance.create'],
+        permissions: ['attendance:write'],
       },
     ],
   },
-
-  //  {
-  //   title: 'Report Bulanan',
-  //   path: '/work-submissions',
-  //   icon: DraftingCompass,
-  //   permissions: ['attendance.read', 'attendance.read_own'],
-  //   subMenus: [
-  //     {
-  //       title: 'Rekap Report',
-  //       path: '/work-submissions/list',
-  //       permissions: ['work_submission.read'],
-  //       roles: ['super_admin', 'hr_admin', 'org_unit_head'],
-  //       requireAllRoles: false,
-  //     },
-  //     {
-  //       title: 'Report Saya',
-  //       path: '/work-submissions/my-submissions',
-  //       permissions: ['work_submission.read_own'],
-  //     },
-  //     {
-  //       title: 'Kumpulkan Report',
-  //       path: '/work-submissions/submit',
-  //       permissions: ['work_submission.read_own', 'work_submission.create'],
-  //     },
-  //   ],
-  // },
   {
     title: 'Cuti',
     path: '/leave-requests',
     icon: CalendarClock,
-    permissions: ['leave_request.read', 'leave_request.read_own'],
+    permissions: ['leave:read'],
     requireAll: false,
     subMenus: [
       {
         title: 'Daftar Cuti',
         path: '/leave-requests/list',
-        permissions: ['leave_request.read_all'],
+        permissions: ['leave:read_all'],
         roles: ['super_admin', 'hr_admin'],
         requireAllRoles: false,
       },
       {
         title: 'Cuti Saya',
         path: '/leave-requests/my-leave-requests',
-        permissions: ['leave_request.read_own'],
+        permissions: ['leave:read'],
       },
     ],
   },
@@ -103,7 +76,7 @@ export const hrisMenus: MenuItem[] = [
     title: 'Laporan',
     path: '/reports',
     icon: BarChart3,
-    permissions: ['employee.export', 'attendance.export', 'payroll.export'],
+    permissions: ['dashboard:read_all'],
     requireAll: false,
     roles: ['super_admin', 'hr_admin'],
     requireAllRoles: false,
@@ -111,7 +84,7 @@ export const hrisMenus: MenuItem[] = [
       {
         title: 'Laporan Kehadiran',
         path: '/reports/attendances',
-        permissions: ['attendance.export'],
+        permissions: ['attendance:read_all'],
         roles: ['super_admin', 'hr_admin'],
         requireAllRoles: false,
       },
@@ -121,77 +94,48 @@ export const hrisMenus: MenuItem[] = [
     title: 'Manajemen Organisasi',
     path: '/organization',
     icon: Building,
-    permissions: ['org_unit.read'],
+    permissions: ['org_units:read'],
     roles: ['super_admin', 'hr_admin'],
     requireAllRoles: false,
     subMenus: [
       {
         title: 'Daftar Unit Organisasi',
         path: '/organization/list',
-        permissions: ['org_unit.read'],
+        permissions: ['org_units:read'],
         roles: ['super_admin', 'hr_admin'],
         requireAllRoles: false,
       },
       {
         title: 'Unit Terhapus',
         path: '/organization/archived',
-        permissions: ['org_unit.view_deleted'],
+        permissions: ['org_units:write'],
         roles: ['super_admin'],
         requireAllRoles: true,
       },
-      // {
-      //   title: 'Struktur Organisasi',
-      //   path: '/organization/structure',
-      //   permissions: ['org_unit.read'],
-      // },
     ],
   },
   {
     title: 'Manajemen Karyawan',
     path: '/employees',
     icon: Users,
-    permissions: ['employee.read'],
+    permissions: ['employees:read'],
     roles: ['super_admin', 'hr_admin'],
     requireAllRoles: false,
     subMenus: [
       {
         title: 'Daftar Karyawan',
         path: '/employees/list',
-        permissions: ['employee.read'],
+        permissions: ['employees:read'],
         roles: ['super_admin', 'hr_admin'],
         requireAllRoles: false,
       },
       {
         title: 'Karyawan Terhapus',
         path: '/employees/archived',
-        permissions: ['employee.view_deleted'],
+        permissions: ['employees:delete'],
         roles: ['super_admin'],
         requireAllRoles: true,
       },
-      // {
-      //   title: 'Hirarki Karyawan',
-      //   path: '/employees/hierarchy',
-      //   permissions: ['employee.read'],
-      // },
     ],
   },
-  // User management digabung dengan Employee management
-  // {
-  //   title: 'Manajemen User',
-  //   path: '/users',
-  //   icon: UserCog,
-  //   permissions: ['user.read'],
-  //   roles: ['super_admin'],
-  //   requireAllRoles: true,
-  //   subMenus: [
-  //     {
-  //       title: 'Daftar Users',
-  //       path: '/users/list',
-  //       permissions: ['user.read'],
-  //       roles: ['super_admin'],
-  //       requireAllRoles: true,
-  //     },
-  //   ],
-  // },
-
 ];

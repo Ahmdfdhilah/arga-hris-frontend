@@ -49,7 +49,7 @@ const ArchivedOrgUnitList: React.FC = () => {
   const { userData } = useAppSelector((state) => state.auth);
 
   // Check permissions
-  const canRestore = hasPermission(userData, 'org_unit.restore');
+  const canRestore = hasPermission(userData, 'org_units:restore');
 
   const urlFiltersHook = useURLFilters<PaginationParams & { search?: string }>({
     defaults: {

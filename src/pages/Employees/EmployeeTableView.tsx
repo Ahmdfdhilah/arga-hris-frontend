@@ -10,12 +10,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   Button,
-  Avatar,
-  AvatarFallback,
 } from '@/components/common';
 import { Mail, MoreVertical, Edit, UserX, UserCheck, Building2, Eye, Shield, Briefcase, Trash2 } from 'lucide-react';
 import type { Employee } from '@/services/employees/types';
-import { EMPLOYEE_TYPE_OPTIONS } from '@/services/employees/types/shared';
+import { getEmployeeTypeLabel } from '@/services/employees/utils';
 
 interface EmployeeTableViewProps {
   employees: Employee[];
@@ -26,20 +24,6 @@ interface EmployeeTableViewProps {
   onDelete?: (employee: Employee) => void;
   onManageRoles?: (employee: Employee) => void;
 }
-
-const getInitials = (name: string): string => {
-  const parts = name.split(' ');
-  if (parts.length >= 2) {
-    return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
-  }
-  return name.substring(0, 2).toUpperCase();
-};
-
-const getEmployeeTypeLabel = (employeeType: string | null | undefined): string => {
-  if (!employeeType) return '-';
-  const option = EMPLOYEE_TYPE_OPTIONS.find(opt => opt.value === employeeType);
-  return option?.label || employeeType;
-};
 
 const EmployeeTableView: React.FC<EmployeeTableViewProps> = ({
   employees,
@@ -55,14 +39,12 @@ const EmployeeTableView: React.FC<EmployeeTableViewProps> = ({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[50px]"></TableHead>
-            <TableHead>Nomor Karyawan</TableHead>
             <TableHead>Nama</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Unit Organisasi</TableHead>
             <TableHead>Tipe Karyawan</TableHead>
             <TableHead className="text-center">Status</TableHead>
-            <TableHead className="w-[70px]"></TableHead>
+            <TableHead className="w-[70px]">Aksi</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -73,18 +55,6 @@ const EmployeeTableView: React.FC<EmployeeTableViewProps> = ({
 
             return (
               <TableRow key={employee.id}>
-                <TableCell>
-                  <Avatar className="h-9 w-9">
-                    <AvatarFallback className="bg-primary/10 text-primary">
-                      {getInitials(displayName)}
-                    </AvatarFallback>
-                  </Avatar>
-                </TableCell>
-
-                <TableCell className="font-medium">
-                  {employee.employee_number || '-'}
-                </TableCell>
-
                 <TableCell className="font-medium">
                   {displayName}
                 </TableCell>
@@ -107,9 +77,16 @@ const EmployeeTableView: React.FC<EmployeeTableViewProps> = ({
 
                 <TableCell>
                   {employee && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Briefcase className="h-3.5 w-3.5" />
-                      <span>{getEmployeeTypeLabel(employee.employee_type)}</span>
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Briefcase className="h-3.5 w-3.5" />
+                        <span>{getEmployeeTypeLabel(employee.type)}</span>
+                      </div>
+                      {employee.site && (
+                        <span className="text-xs text-muted-foreground ml-5 capitalize">
+                          {employee.site.replace('_', ' ')}
+                        </span>
+                      )}
                     </div>
                   )}
                 </TableCell>

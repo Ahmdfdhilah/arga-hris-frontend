@@ -10,9 +10,9 @@ export const EmployeesRoutes = () => {
       <Route
         path="/employees/list"
         element={
-          <AuthGuard >
+          <AuthGuard requiredPermissions={['employees:read']}>
             <Layout>
-              <EmployeeList/>
+              <EmployeeList />
             </Layout>
           </AuthGuard>
         }
@@ -20,9 +20,9 @@ export const EmployeesRoutes = () => {
       <Route
         path="/employees/archived"
         element={
-          <AuthGuard requiredPermissions={['employee.view_deleted']}>
+          <AuthGuard requiredPermissions={['employees:view_deleted']}>
             <Layout>
-              <ArchivedEmployeeList/>
+              <ArchivedEmployeeList />
             </Layout>
           </AuthGuard>
         }

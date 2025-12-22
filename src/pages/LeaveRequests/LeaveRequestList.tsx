@@ -65,12 +65,11 @@ const LeaveRequestList: React.FC = () => {
   const [leaveRequestToDelete, setLeaveRequestToDelete] =
     useState<LeaveRequestWithEmployee | null>(null);
 
-  // Get current user from Redux store
   const { userData } = useAppSelector((state) => state.auth);
 
-  const canCreate = hasPermission(userData, 'leave_request.create');
-  const canUpdate = hasPermission(userData, 'leave_request.update');
-  const canDelete = hasPermission(userData, 'leave_request.delete');
+  const canCreate = hasPermission(userData, 'leave:write');
+  const canUpdate = hasPermission(userData, 'leave:update');
+  const canDelete = hasPermission(userData, 'leave:delete');
 
   const urlFiltersHook = useURLFilters<PaginationParams & LeaveRequestFilterParams>({
     defaults: {

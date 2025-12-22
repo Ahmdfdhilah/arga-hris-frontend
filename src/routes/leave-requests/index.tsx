@@ -9,7 +9,7 @@ export const LeaveRequestsRoutes = () => {
       <Route
         path="/leave-requests/list"
         element={
-          <AuthGuard>
+          <AuthGuard requiredPermissions={['leave:read_all']}>
             <Layout>
               <LeaveRequestList />
             </Layout>
@@ -19,7 +19,7 @@ export const LeaveRequestsRoutes = () => {
       <Route
         path="/leave-requests/my-leave-requests"
         element={
-          <AuthGuard>
+          <AuthGuard requiredPermissions={['leave:read']}>
             <Layout>
               <MyLeaveRequests />
             </Layout>

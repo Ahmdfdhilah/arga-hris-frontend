@@ -60,9 +60,9 @@ const OrgUnitList: React.FC = () => {
   const { userData } = useAppSelector((state) => state.auth);
 
   // Check permissions
-  const canCreate = hasPermission(userData, 'org_unit.create');
-  const canUpdate = hasPermission(userData, 'org_unit.update');
-  const canDelete = hasPermission(userData, 'org_unit.delete');
+  const canCreate = hasPermission(userData, 'org_units:write');
+  const canUpdate = hasPermission(userData, 'org_units:write');
+  const canDelete = hasPermission(userData, 'org_units:write');
 
   const urlFiltersHook = useURLFilters<PaginationParams & OrgUnitFilterParams>({
     defaults: {

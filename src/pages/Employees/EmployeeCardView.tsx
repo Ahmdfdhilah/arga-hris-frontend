@@ -93,7 +93,7 @@ export function EmployeeCardView({
                     {employee.name}
                   </CardTitle>
                   <CardDescription className="text-xs">
-                    {employee.employee_number}
+                    {employee.code}
                   </CardDescription>
                 </div>
               </div>
@@ -159,7 +159,8 @@ export function EmployeeCardView({
                   {employee.org_unit?.name || 'No Org Unit'}
                 </div>
                 <div className="flex items-center gap-2 mt-2">
-                  <Badge variant="outline">{employee.employee_type}</Badge>
+                  <Badge variant="outline">{employee.type}</Badge>
+                  {employee.site && <Badge variant="secondary" className="capitalize">{employee.site.replace('_', ' ')}</Badge>}
                   <Badge
                     variant={employee.is_active ? 'default' : 'secondary'}
                     className={cn(

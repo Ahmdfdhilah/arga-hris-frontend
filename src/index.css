@@ -58,9 +58,10 @@
   --primary-foreground: hsl(0, 0%, 100%);
 
   /* American Green - #46B749 */
-  --secondary: hsl(122, 45%, 50%);
-  --secondary-foreground: hsl(0, 0%, 100%);
+   --secondary: hsl(0, 0%, 100%);
 
+  --secondary-foreground: hsl(122, 45%, 50%);
+ 
   --tertiary: hsl(50, 99%, 49%);
   --tertiary-foreground: hsl(0, 0%, 100%);
 

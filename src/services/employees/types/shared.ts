@@ -8,16 +8,28 @@ export const EMPLOYEE_STATUS_OPTIONS = [
   { value: false, label: 'Tidak Aktif' },
 ];
 
-export enum EmployeeType {
+export enum EmployeeSite {
   ON_SITE = 'on_site',
   HYBRID = 'hybrid',
   HO = 'ho',
 }
 
-export const EMPLOYEE_TYPE_OPTIONS = [
+export const EMPLOYEE_SITE_OPTIONS = [
   { value: 'on_site', label: 'On Site' },
   { value: 'hybrid', label: 'Hybrid' },
   { value: 'ho', label: 'Head Office' },
+];
+
+export enum EmployeeType {
+  FULLTIME = 'fulltime',
+  CONTRACT = 'contract',
+  INTERN = 'intern',
+}
+
+export const EMPLOYEE_TYPE_OPTIONS = [
+  { value: 'fulltime', label: 'Full Time' },
+  { value: 'contract', label: 'Contract' },
+  { value: 'intern', label: 'Intern' },
 ];
 
 export enum EmployeeGender {

@@ -83,12 +83,17 @@ export const refreshToken = createAsyncThunk(
 // Async thunk to logout
 export const logout = createAsyncThunk(
   'auth/logout',
-  async (_, { rejectWithValue }) => {
+  async (_, { getState }) => {
     try {
-      // await authService.logout();
+      const state = getState() as { auth: AuthState };
+      const token = state.auth.accessToken;
+      if (token) {
+        await authService.logout(token);
+      }
       return null;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to logout');
+      console.error('Backend logout failed:', error);
+      return null;
     }
   }
 );

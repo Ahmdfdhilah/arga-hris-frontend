@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FormDialog } from '@/components/common/FormDialog';
 import EmployeeFormFields from './EmployeeFormFields';
-import type { Employee, EmployeeType, EmployeeGender } from '@/services/employees/types';
+import type { Employee } from '@/services/employees/types';
 import { validateEmployeeEmail, validateEmployeePhone, validateEmployeeNumber } from '@/services/employees/utils';
 
 
@@ -15,14 +15,15 @@ interface EmployeeFormDialogProps {
 
 // Form data matches what EmployeeFormFields expects
 export interface EmployeeFormData {
-  number?: string;
+  code?: string;
   first_name?: string;
   last_name?: string;
   email?: string;
   phone?: string;
   position?: string;
-  employee_type?: EmployeeType;
-  employee_gender?: EmployeeGender;
+  type?: string;
+  site?: string;
+  gender?: string;
   org_unit_id?: number;
   supervisor_id?: number;
   is_active?: boolean;
@@ -48,14 +49,17 @@ const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({
         const lastName = nameParts.slice(1).join(' ') || '';
 
         setFormData({
-          number: employee.employee_number || '',
+          code: employee.code || '',
           first_name: firstName,
           last_name: lastName,
           email: employee.email || '',
-          phone: employee.phone || '',
+          // Phone is now on user object if available, or we might need to fetch it? 
+          // Assuming user is populated.
+          phone: employee.user?.phone || '',
           position: employee.position || '',
-          employee_type: (employee.employee_type as EmployeeType) || undefined,
-          employee_gender: (employee.employee_gender as EmployeeGender) || undefined,
+          type: employee.type || undefined,
+          site: employee.site || undefined,
+          gender: employee.user?.gender || undefined,
           org_unit_id: employee.org_unit_id || undefined,
           supervisor_id: employee.supervisor_id || undefined,
           is_active: employee.is_active ?? true,
@@ -63,14 +67,15 @@ const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({
       } else {
         // Create mode
         setFormData({
-          number: '',
+          code: '',
           first_name: '',
           last_name: '',
           email: '',
           phone: '',
           position: '',
-          employee_type: undefined,
-          employee_gender: undefined,
+          type: undefined,
+          site: undefined,
+          gender: undefined,
           org_unit_id: undefined,
           supervisor_id: undefined,
           is_active: true,
@@ -103,10 +108,9 @@ const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({
     const newErrors: Record<string, string> = {};
 
     if (!isEdit) {
-      // Create mode validation
-      const numberValidation = validateEmployeeNumber(formData.number || '');
+      const numberValidation = validateEmployeeNumber(formData.code || '');
       if (!numberValidation.valid) {
-        newErrors.number = numberValidation.error || 'Nomor karyawan tidak valid';
+        newErrors.code = numberValidation.error || 'Nomor karyawan tidak valid';
       }
 
       if (!formData.first_name?.trim()) {
@@ -122,7 +126,6 @@ const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({
         newErrors.email = emailValidation.error || 'Email tidak valid';
       }
     } else {
-      // Update mode validation
       if (formData.first_name !== undefined && !formData.first_name?.trim()) {
         newErrors.first_name = 'Nama depan tidak boleh kosong';
       }
@@ -146,7 +149,6 @@ const EmployeeFormDialog: React.FC<EmployeeFormDialogProps> = ({
   const handleSubmit = () => {
     if (!validateForm()) return;
 
-    // Pass raw form data to parent component which handles the mutation
     onSubmit(formData);
   };
 

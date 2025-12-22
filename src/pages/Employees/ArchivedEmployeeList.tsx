@@ -167,7 +167,7 @@ const ArchivedEmployeeList: React.FC = () => {
                       return (
                         <TableRow key={employee.id}>
                           <TableCell className="font-medium">
-                            {employee.employee_number || '-'}
+                            {employee.code || '-'}
                           </TableCell>
 
                           <TableCell className="font-medium">
@@ -192,17 +192,7 @@ const ArchivedEmployeeList: React.FC = () => {
 
                           <TableCell>
                             <span className="text-sm text-muted-foreground">
-                              {/* Note: deleted_at currently not in Employee type, using updated_at or assuming backend provides it if filtering by deleted */}
-                              {/* Wait, Employee type MIGHT have deleted_at if it's coming from getDeletedEmployees? 
-                                  Checking response structure: Employee type usually doesn't have deleted_at if it was filtered out by default.
-                                  However, for 'deleted' context, it might be present or we can use updated_at.
-                                  Let's check Employee interface def. 
-                                  I will assume standard Employee interface for now. If deleted_at is missing, I might need to extend it or cast it.
-                                  Let's just use updated_at for now to be safe, or check if Employee extends a base model with deleted_at.
-                                  The backend usually sends deleted_at if using paranoid/soft deletes.
-                              */}
-                              {/* Actually, let's just use empty string or updated_at for now to avoid TS error if not in interface. */}
-                              -
+                              {employee.deleted_at ? new Date(employee.deleted_at).toLocaleDateString('id-ID') : '-'}
                             </span>
                           </TableCell>
 

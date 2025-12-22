@@ -20,7 +20,7 @@ export const OrgUnitsRoutes = () => {
             <Route
                 path="/organization/archived"
                 element={
-                    <AuthGuard requiredPermissions={['org_unit.view_deleted']}>
+                    <AuthGuard requiredPermissions={['org_units:view_deleted']}>
                         <Layout>
                             <ArchivedOrgUnitList />
                         </Layout>

@@ -1,5 +1,5 @@
 import { employeesService } from './service';
-import type { Employee } from './types';
+import { EMPLOYEE_TYPE_OPTIONS, type Employee } from './types';
 
 export async function isEmployeeActive(employeeId: number): Promise<boolean> {
   try {
@@ -16,7 +16,7 @@ export function formatEmployeeName(employee: Employee): string {
 }
 
 export function formatEmployeeDisplay(employee: Employee): string {
-  return `${employee.employee_number} - ${employee.name}`;
+  return `${employee.code} - ${employee.name}`;
 }
 
 export function getEmployeeInitials(employee: Employee): string {
@@ -47,7 +47,7 @@ export function validateEmployeePhone(phone: string): { valid: boolean; error?: 
 
   const cleaned = phone.replace(/[-\s()]/g, '');
   const phoneRegex = /^\+?[0-9]+$/;
-  
+
   if (!phoneRegex.test(cleaned)) {
     return { valid: false, error: 'Nomor telepon hanya boleh mengandung angka dan tanda +' };
   }
@@ -80,6 +80,12 @@ export async function getEmployeeSupervisor(employeeId: number): Promise<Employe
     return null;
   }
 }
+export const getEmployeeTypeLabel = (employeeType: string | null | undefined): string => {
+  if (!employeeType) return '-';
+  const option = EMPLOYEE_TYPE_OPTIONS.find(opt => opt.value === employeeType);
+  return option?.label || employeeType;
+};
+
 
 export async function hasSubordinates(employeeId: number): Promise<boolean> {
   try {
@@ -100,7 +106,7 @@ export function sortEmployeesByName(employees: Employee[]): Employee[] {
 }
 
 export function sortEmployeesByNumber(employees: Employee[]): Employee[] {
-  return [...employees].sort((a, b) => a.employee_number.localeCompare(b.employee_number));
+  return [...employees].sort((a, b) => (a.code || '').localeCompare(b.code || ''));
 }
 
 export function groupEmployeesByOrgUnit(employees: Employee[]): Map<number | null, Employee[]> {
