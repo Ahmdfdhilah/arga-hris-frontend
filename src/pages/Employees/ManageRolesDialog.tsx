@@ -33,7 +33,7 @@ export function ManageRolesDialog({ open, onOpenChange, employee }: ManageRolesD
   const { data: allRolesData, isLoading: isLoadingRoles } = useAllRoles();
 
   // Get user's current roles (using user.id from employee)
-  const userId = employee?.user?.id ? parseInt(employee.user.id) : null;
+  const userId = employee?.user?.id ?? null;
   const { data: userRolesData, isLoading: isLoadingUserRoles } = useUserRolesPermissions(userId);
 
   // Mutations

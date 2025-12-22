@@ -66,28 +66,34 @@ class UsersService extends BaseService {
     return this.post<ApiResponse<User>>(`/${userId}/activate`);
   }
 
-  async getUserRolesAndPermissions(userId: number): Promise<ApiResponse<UserRolesPermissions>> {
-    return this.get<ApiResponse<UserRolesPermissions>>(`/../roles/${userId}`);
+  async getUserRolesAndPermissions(userId: string): Promise<ApiResponse<UserRolesPermissions>> {
+    const response = await this.api.get<ApiResponse<UserRolesPermissions>>(`/roles/${userId}`);
+    return response.data;
   }
 
-  async assignRole(userId: number, request: AssignRoleRequest): Promise<ApiResponse<null>> {
-    return this.post<ApiResponse<null>>(`/../roles/${userId}/assign`, request);
+  async assignRole(userId: string, request: AssignRoleRequest): Promise<ApiResponse<null>> {
+    const response = await this.api.post<ApiResponse<null>>(`/roles/${userId}/assign`, request);
+    return response.data;
   }
 
-  async removeRole(userId: number, request: RemoveRoleRequest): Promise<ApiResponse<null>> {
-    return this.post<ApiResponse<null>>(`/../roles/${userId}/remove`, request);
+  async removeRole(userId: string, request: RemoveRoleRequest): Promise<ApiResponse<null>> {
+    const response = await this.api.post<ApiResponse<null>>(`/roles/${userId}/remove`, request);
+    return response.data;
   }
 
-  async assignMultipleRoles(userId: number, request: AssignRolesRequest): Promise<ApiResponse<{ roles: string[] }>> {
-    return this.post<ApiResponse<{ roles: string[] }>>(`/../roles/${userId}/assign-multiple`, request);
+  async assignMultipleRoles(userId: string, request: AssignRolesRequest): Promise<ApiResponse<{ roles: string[] }>> {
+    const response = await this.api.post<ApiResponse<{ roles: string[] }>>(`/roles/${userId}/assign-multiple`, request);
+    return response.data;
   }
 
   async getAllRoles(): Promise<ApiResponse<Role[]>> {
-    return this.get<ApiResponse<Role[]>>('/../roles');
+    const response = await this.api.get<ApiResponse<Role[]>>('/roles');
+    return response.data;
   }
 
   async getAllPermissions(): Promise<ApiResponse<Permission[]>> {
-    return this.get<ApiResponse<Permission[]>>('/../roles/permissions');
+    const response = await this.api.get<ApiResponse<Permission[]>>('/roles/permissions');
+    return response.data;
   }
 
 

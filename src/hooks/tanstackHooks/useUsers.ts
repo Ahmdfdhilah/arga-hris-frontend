@@ -35,7 +35,7 @@ export const usersKeys = {
   detail: (id: number) => [...usersKeys.details(), id] as const,
   roles: () => [...usersKeys.all, 'roles'] as const,
   allRoles: () => [...usersKeys.roles(), 'all'] as const,
-  userRoles: (id: number) => [...usersKeys.roles(), 'user', id] as const,
+  userRoles: (id: string) => [...usersKeys.roles(), 'user', id] as const,
 };
 
 // ==================== Queries ====================
@@ -282,7 +282,7 @@ export const useAllRoles = (
  * Hook untuk mendapatkan roles dan permissions user
  */
 export const useUserRolesPermissions = (
-  userId: number | null,
+  userId: string | null,
   options?: Omit<
     UseQueryOptions<
       ApiResponse<UserRolesPermissions>,
@@ -310,7 +310,7 @@ export const useAssignRole = (
     UseMutationOptions<
       ApiResponse<null>,
       Error,
-      { userId: number; data: AssignRoleRequest }
+      { userId: string; data: AssignRoleRequest }
     >,
     'mutationFn'
   >,
@@ -320,7 +320,7 @@ export const useAssignRole = (
 
   return useMutation({
     ...restOptions,
-    mutationFn: ({ userId, data }: { userId: number; data: AssignRoleRequest }) =>
+    mutationFn: ({ userId, data }: { userId: string; data: AssignRoleRequest }) =>
       usersService.assignRole(userId, data),
     onSuccess: (response, variables, context, _mutation) => {
       queryClient.invalidateQueries({
@@ -345,7 +345,7 @@ export const useRemoveRole = (
     UseMutationOptions<
       ApiResponse<null>,
       Error,
-      { userId: number; data: RemoveRoleRequest }
+      { userId: string; data: RemoveRoleRequest }
     >,
     'mutationFn'
   >,
@@ -355,7 +355,7 @@ export const useRemoveRole = (
 
   return useMutation({
     ...restOptions,
-    mutationFn: ({ userId, data }: { userId: number; data: RemoveRoleRequest }) =>
+    mutationFn: ({ userId, data }: { userId: string; data: RemoveRoleRequest }) =>
       usersService.removeRole(userId, data),
     onSuccess: (response, variables, context, _mutation) => {
       queryClient.invalidateQueries({
@@ -380,7 +380,7 @@ export const useAssignMultipleRoles = (
     UseMutationOptions<
       ApiResponse<{ roles: string[] }>,
       Error,
-      { userId: number; data: AssignRolesRequest }
+      { userId: string; data: AssignRolesRequest }
     >,
     'mutationFn'
   >,
@@ -390,7 +390,7 @@ export const useAssignMultipleRoles = (
 
   return useMutation({
     ...restOptions,
-    mutationFn: ({ userId, data }: { userId: number; data: AssignRolesRequest }) =>
+    mutationFn: ({ userId, data }: { userId: string; data: AssignRolesRequest }) =>
       usersService.assignMultipleRoles(userId, data),
     onSuccess: (response, variables, context, _mutation) => {
       queryClient.invalidateQueries({
