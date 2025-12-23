@@ -89,22 +89,31 @@ export const useAuthStore = create<AuthState & AuthActions>()(
             },
 
             refreshToken: async () => {
-                const { refreshTokenValue } = get();
+                const { refreshTokenValue, deviceId } = get();
                 if (!refreshTokenValue) {
                     console.error('[refreshToken] No refresh token available');
                     return false;
                 }
 
+                let finalDeviceId = deviceId;
+                if (!finalDeviceId && refreshTokenValue) {
+                    try {
+                        const payload = JSON.parse(atob(refreshTokenValue.split('.')[1]));
+                        finalDeviceId = payload.device_id;
+                    } catch {
+                        // Ignore decode errors
+                    }
+                }
+
                 try {
-                    const response = await axios.post(`${API_BASE_URL_SSO}/auth/refresh`, {}, {
-                        headers: {
-                            Authorization: `Bearer ${refreshTokenValue}`
-                        }
+                    const response = await axios.post(`${API_BASE_URL_SSO}/auth/refresh`, {
+                        refresh_token: refreshTokenValue,
+                        device_id: finalDeviceId,
                     });
 
                     set({
-                        accessToken: response.data.access_token,
-                        refreshTokenValue: response.data.refresh_token,
+                        accessToken: response.data.data.access_token,
+                        refreshTokenValue: response.data.data.refresh_token,
                     });
                     return true;
                 } catch (error: any) {
