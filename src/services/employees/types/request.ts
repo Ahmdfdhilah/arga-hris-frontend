@@ -7,7 +7,6 @@ export interface CreateEmployeeRequest {
   site?: string;
   type?: string;
   org_unit_id?: number;
-  supervisor_id?: number;
   is_active?: boolean;
 }
 
@@ -20,7 +19,6 @@ export interface UpdateEmployeeRequest {
   site?: string;
   type?: string;
   org_unit_id?: number;
-  supervisor_id?: number;
   is_active?: boolean;
 }
 

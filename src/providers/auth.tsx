@@ -12,7 +12,6 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Handle SSO token processing
   useEffect(() => {
     const handleSsoTokens = async () => {
       try {
@@ -21,24 +20,16 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         const refreshTokenValue = urlParams.get('refresh_token');
         const deviceIdValue = urlParams.get('device_id');
 
-        // Check if we have SSO tokens in the URL
         if (ssoToken && refreshTokenValue) {
-          // If we're already authenticated with the same token, just clean the URL
           if (isAuthenticated && accessToken === ssoToken) {
             navigate(location.pathname, { replace: true });
           } else {
-            // Clear any existing auth state first to prevent stale token issues
             if (isAuthenticated) {
               clearAuth();
             }
 
-            // Set new tokens including device_id
             setTokens(ssoToken, refreshTokenValue, deviceIdValue || undefined);
-
-            // Fetch user data
             await verifyAndFetchUserData();
-
-            // Clean up URL after processing the tokens
             navigate(location.pathname, { replace: true });
           }
         }
@@ -52,18 +43,15 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     handleSsoTokens();
   }, [location.search]);
 
-  // Initial loading complete after first check
   useEffect(() => {
     if (!initializing) return;
 
-    // If we don't have SSO tokens in URL and auth state is determined, we're done initializing
     const urlParams = new URLSearchParams(window.location.search);
     if (!urlParams.has('sso_token') && !urlParams.has('refresh_token')) {
       setInitializing(false);
     }
   }, [initializing]);
 
-  // Show loading spinner while initializing
   if (initializing) {
     return (
       <div className="min-h-screen flex items-center justify-center">

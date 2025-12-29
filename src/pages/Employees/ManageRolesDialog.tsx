@@ -88,7 +88,6 @@ export function ManageRolesDialog({ open, onOpenChange, employee }: ManageRolesD
   const allRoles: Role[] = allRolesData?.data || [];
   const isLoading = isLoadingRoles || isLoadingUserRoles;
 
-  // Role display helpers
   const getRoleBadgeVariant = (roleName: string) => {
     switch (roleName) {
       case 'super_admin':
