@@ -10,7 +10,6 @@ interface OrgUnitFormDialogProps {
   orgUnit?: OrgUnit | null;
   onSubmit: (data: CreateOrgUnitRequest | UpdateOrgUnitRequest) => void;
   isSubmitting: boolean;
-  orgUnitTypes: string[];
 }
 
 type OrgUnitFormData = Partial<CreateOrgUnitRequest> & Partial<UpdateOrgUnitRequest>;
@@ -21,7 +20,6 @@ const OrgUnitFormDialog: React.FC<OrgUnitFormDialogProps> = ({
   orgUnit = null,
   onSubmit,
   isSubmitting,
-  orgUnitTypes,
 }) => {
   const isEdit = !!orgUnit;
   const [formData, setFormData] = useState<OrgUnitFormData>({});
@@ -134,7 +132,6 @@ const OrgUnitFormDialog: React.FC<OrgUnitFormDialogProps> = ({
         errors={errors}
         onChange={handleFieldChange}
         isEdit={isEdit}
-        orgUnitTypes={orgUnitTypes}
       />
     </FormDialog>
   );

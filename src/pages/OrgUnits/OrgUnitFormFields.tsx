@@ -20,9 +20,8 @@ import {
   Building2,
   Layers,
   User,
-  Type,
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useOrgUnitSearch } from '@/hooks/useOrgUnitSearch';
 import { useEmployeeSearch } from '@/hooks/useEmployeeSearch';
 import type { CreateOrgUnitRequest, UpdateOrgUnitRequest } from '@/services/org_units/types';
@@ -34,7 +33,6 @@ interface OrgUnitFormFieldsProps {
   errors: Record<string, string>;
   onChange: (field: string, value: string | number | boolean | null | undefined) => void;
   isEdit?: boolean;
-  orgUnitTypes: string[];
 }
 
 const OrgUnitFormFields: React.FC<OrgUnitFormFieldsProps> = ({
@@ -42,7 +40,6 @@ const OrgUnitFormFields: React.FC<OrgUnitFormFieldsProps> = ({
   errors,
   onChange,
   isEdit = false,
-  orgUnitTypes,
 }) => {
   const parentSearch = useOrgUnitSearch();
   const employeeSearch = useEmployeeSearch();
@@ -61,30 +58,12 @@ const OrgUnitFormFields: React.FC<OrgUnitFormFieldsProps> = ({
     }
   }, [formData.head_id]);
 
-  const defaultTypes = [
-    'company',
-    'division',
-    'department',
-    'section',
-    'team',
-    'branch',
-    'region',
+  // Strict org unit types - synced with backend enum
+  const ORG_UNIT_TYPES = [
+    { value: 'Direktorat', label: 'Direktorat' },
+    { value: 'Managerial', label: 'Managerial' },
+    { value: 'Operasional', label: 'Operasional' },
   ];
-
-  const availableTypes = orgUnitTypes.length > 0 ? orgUnitTypes : defaultTypes;
-
-  const isCustomType = formData.type && !availableTypes.includes(formData.type);
-  const [showCustomInput, setShowCustomInput] = useState(isCustomType);
-
-  const handleTypeChange = (value: string) => {
-    if (value === '__custom__') {
-      setShowCustomInput(true);
-      onChange('type', '');
-    } else {
-      setShowCustomInput(false);
-      onChange('type', value);
-    }
-  };
 
   return (
     <div className="space-y-4">
@@ -127,45 +106,26 @@ const OrgUnitFormFields: React.FC<OrgUnitFormFieldsProps> = ({
       <Field>
         <FieldLabel>Tipe Unit</FieldLabel>
         <FieldContent>
-          <div className="space-y-2">
-            <InputGroup>
-              <InputGroupAddon align="inline-start">
-                <Layers className="h-4 w-4 text-muted-foreground" />
-              </InputGroupAddon>
-              <Select
-                value={showCustomInput ? '__custom__' : (formData.type || '')}
-                onValueChange={handleTypeChange}
-              >
-                <SelectTrigger className="flex-1 border-0 shadow-none focus:ring-0">
-                  <SelectValue placeholder="Pilih tipe unit..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableTypes.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      <span className="capitalize">{type}</span>
-                    </SelectItem>
-                  ))}
-                  <SelectItem value="__custom__">
-                    <span className="text-primary">+ Custom Type...</span>
+          <InputGroup>
+            <InputGroupAddon align="inline-start">
+              <Layers className="h-4 w-4 text-muted-foreground" />
+            </InputGroupAddon>
+            <Select
+              value={formData.type || ''}
+              onValueChange={(value) => onChange('type', value)}
+            >
+              <SelectTrigger className="flex-1 border-0 shadow-none focus:ring-0">
+                <SelectValue placeholder="Pilih tipe unit..." />
+              </SelectTrigger>
+              <SelectContent>
+                {ORG_UNIT_TYPES.map((type) => (
+                  <SelectItem key={type.value} value={type.value}>
+                    {type.label}
                   </SelectItem>
-                </SelectContent>
-              </Select>
-            </InputGroup>
-
-            {showCustomInput && (
-              <InputGroup>
-                <InputGroupAddon align="inline-start">
-                  <Type className="h-4 w-4 text-muted-foreground" />
-                </InputGroupAddon>
-                <InputGroupInput
-                  value={formData.type || ''}
-                  onChange={(e) => onChange('type', e.target.value.toLowerCase())}
-                  placeholder="Ketik tipe custom (contoh: unit, group)"
-                  autoFocus
-                />
-              </InputGroup>
-            )}
-          </div>
+                ))}
+              </SelectContent>
+            </Select>
+          </InputGroup>
         </FieldContent>
         {errors.type && <FieldError>{errors.type}</FieldError>}
       </Field>
@@ -213,7 +173,7 @@ const OrgUnitFormFields: React.FC<OrgUnitFormFieldsProps> = ({
               <User className="h-4 w-4 text-muted-foreground" />
             </InputGroupAddon>
             <div className="flex-1">
-             <Combobox
+              <Combobox
                 options={[
                   { value: null, label: '-- Kosong --' },
                   ...employeeSearch.options

@@ -19,7 +19,7 @@ import { hasPermission } from '@/services/users/utils';
 import { useResponsive } from '@/hooks/useResponsive';
 import { useURLFilters } from '@/hooks/useURLFilters';
 import { useOrgUnitSearch } from '@/hooks/useOrgUnitSearch';
-import { useOrgUnits, useOrgUnitTypes, useCreateOrgUnit, useUpdateOrgUnit, useDeleteOrgUnit } from '@/hooks/tanstackHooks/useOrgUnits';
+import { useOrgUnits, useCreateOrgUnit, useUpdateOrgUnit, useDeleteOrgUnit } from '@/hooks/tanstackHooks/useOrgUnits';
 import type { OrgUnit, OrgUnitFilterParams, CreateOrgUnitRequest, UpdateOrgUnitRequest } from '@/services/org_units/types';
 import type { PaginationParams } from '@/services/base/types';
 import OrgUnitTableView from './OrgUnitTableView';
@@ -84,7 +84,6 @@ const OrgUnitList: React.FC = () => {
   }, [filters.parent_id]);
 
   const { data, isLoading, isError, error } = useOrgUnits(filters);
-  const { data: typesData } = useOrgUnitTypes();
   const createMutation = useCreateOrgUnit();
   const updateMutation = useUpdateOrgUnit();
   const deleteMutation = useDeleteOrgUnit();
@@ -153,7 +152,8 @@ const OrgUnitList: React.FC = () => {
     }
   };
 
-  const orgUnitTypes = typesData?.data?.types || [];
+  // Strict org unit types for filtering
+  const ORG_UNIT_TYPES = ['Direktorat', 'Managerial', 'Operasional'];
 
   return (
     <div className="space-y-6">
@@ -201,7 +201,7 @@ const OrgUnitList: React.FC = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Semua Tipe</SelectItem>
-                  {orgUnitTypes.map((type: string) => (
+                  {ORG_UNIT_TYPES.map((type) => (
                     <SelectItem key={type} value={type}>
                       {type}
                     </SelectItem>
@@ -349,7 +349,6 @@ const OrgUnitList: React.FC = () => {
         orgUnit={selectedOrgUnit}
         onSubmit={handleSubmit}
         isSubmitting={createMutation.isPending || updateMutation.isPending}
-        orgUnitTypes={orgUnitTypes}
       />
 
       <OrgUnitDetailDialog
