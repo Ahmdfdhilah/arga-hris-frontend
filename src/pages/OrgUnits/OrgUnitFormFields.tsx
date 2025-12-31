@@ -25,6 +25,7 @@ import { useEffect } from 'react';
 import { useOrgUnitSearch } from '@/hooks/useOrgUnitSearch';
 import { useEmployeeSearch } from '@/hooks/useEmployeeSearch';
 import type { CreateOrgUnitRequest, UpdateOrgUnitRequest } from '@/services/org_units/types';
+import { ORG_UNIT_TYPES } from '@/lib/constants';
 
 type OrgUnitFormData = Partial<CreateOrgUnitRequest> & Partial<UpdateOrgUnitRequest>;
 
@@ -44,26 +45,18 @@ const OrgUnitFormFields: React.FC<OrgUnitFormFieldsProps> = ({
   const parentSearch = useOrgUnitSearch();
   const employeeSearch = useEmployeeSearch();
 
-  // Load initial value for parent_id when it exists
   useEffect(() => {
     if (formData.parent_id && parentSearch.loadInitialValue) {
       parentSearch.loadInitialValue(formData.parent_id);
     }
   }, [formData.parent_id]);
 
-  // Load initial value for head_id when it exists
   useEffect(() => {
     if (formData.head_id && employeeSearch.loadInitialValue) {
       employeeSearch.loadInitialValue(formData.head_id);
     }
   }, [formData.head_id]);
 
-  // Strict org unit types - synced with backend enum
-  const ORG_UNIT_TYPES = [
-    { value: 'Direktorat', label: 'Direktorat' },
-    { value: 'Managerial', label: 'Managerial' },
-    { value: 'Operasional', label: 'Operasional' },
-  ];
 
   return (
     <div className="space-y-4">

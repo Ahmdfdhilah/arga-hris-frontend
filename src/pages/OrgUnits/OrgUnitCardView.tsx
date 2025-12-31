@@ -11,8 +11,9 @@ import {
   DropdownMenuTrigger,
   Button,
 } from '@/components/common';
-import { MoreVertical, Edit, Trash2, Building2, User, Layers, Hash, Eye } from 'lucide-react';
+import { MoreVertical, Edit, Trash2, Building2, User, Layers, Eye } from 'lucide-react';
 import type { OrgUnit } from '@/services/org_units/types';
+import { getOrgUnitTypeBadgeClassName } from '@/services/org_units/utils';
 
 interface OrgUnitCardViewProps {
   orgUnit: OrgUnit;
@@ -33,22 +34,16 @@ const OrgUnitCardView: React.FC<OrgUnitCardViewProps> = ({
         <div className="flex items-center gap-2 flex-wrap">
           <ItemTitle className="truncate">{orgUnit.name}</ItemTitle>
           <span
-            className={`h-2 w-2 rounded-full shrink-0 ${
-              orgUnit.is_active ? 'bg-primary' : 'bg-muted-foreground/50'
-            }`}
+            className={`h-2 w-2 rounded-full shrink-0 ${orgUnit.is_active ? 'bg-primary' : 'bg-muted-foreground/50'
+              }`}
           />
         </div>
 
-        <div className="text-xs text-muted-foreground flex items-start gap-2">
-          <Hash className="h-3 w-3 shrink-0 mt-0.5" />
-          <span className="break-words flex-1 min-w-0">{orgUnit.code}</span>
-        </div>
-
-        <ItemDescription className="space-y-0.5">
-          <div className="flex items-start gap-2 text-sm">
-            <Layers className="h-3.5 w-3.5 shrink-0 mt-0.5" />
-            <span className="capitalize break-words flex-1 min-w-0">{orgUnit.type}</span>
-          </div>
+        <ItemDescription className="space-y-1.5">
+          <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${getOrgUnitTypeBadgeClassName(orgUnit.type)}`}>
+            <Layers className="h-3 w-3" />
+            {orgUnit.type}
+          </span>
           {orgUnit.parent && (
             <div className="flex items-start gap-2 text-sm">
               <Building2 className="h-3.5 w-3.5 shrink-0 mt-0.5" />

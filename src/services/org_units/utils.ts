@@ -31,13 +31,13 @@ export function getOrgUnitLevel(orgUnit: OrgUnit): number {
 
 export function buildOrgUnitBreadcrumb(hierarchy: OrgUnitHierarchy): string[] {
   const breadcrumb: string[] = [];
-  
+
   hierarchy.ancestors.forEach(ancestor => {
     breadcrumb.push(ancestor.name);
   });
-  
+
   breadcrumb.push(hierarchy.current.name);
-  
+
   return breadcrumb;
 }
 
@@ -67,11 +67,11 @@ export function validateOrgUnitCode(code: string): { valid: boolean; error?: str
   }
 
   const cleaned = code.trim().toUpperCase();
-  
+
   if (!/^[A-Z0-9_-]+$/.test(cleaned)) {
-    return { 
-      valid: false, 
-      error: 'Kode unit organisasi hanya boleh mengandung huruf, angka, dash, dan underscore' 
+    return {
+      valid: false,
+      error: 'Kode unit organisasi hanya boleh mengandung huruf, angka, dash, dan underscore'
     };
   }
 
@@ -88,4 +88,41 @@ export function sortOrgUnitsByLevel(orgUnits: OrgUnit[]): OrgUnit[] {
 
 export function filterActiveOrgUnits(orgUnits: OrgUnit[]): OrgUnit[] {
   return orgUnits.filter(unit => unit.is_active);
+}
+
+// ===== Org Unit Type Badge Utils (SSOT) =====
+
+export type OrgUnitTypeValue = 'Direktorat' | 'Managerial' | 'Operasional';
+
+interface TypeBadgeConfig {
+  label: string;
+  className: string;
+}
+
+const TYPE_BADGE_CONFIGS: Record<OrgUnitTypeValue, TypeBadgeConfig> = {
+  Direktorat: {
+    label: 'Direktorat',
+    className: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
+  },
+  Managerial: {
+    label: 'Managerial',
+    className: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+  },
+  Operasional: {
+    label: 'Operasional',
+    className: 'bg-slate-100 text-slate-700 dark:bg-slate-800/50 dark:text-slate-300',
+  },
+};
+
+const DEFAULT_BADGE_CONFIG: TypeBadgeConfig = {
+  label: 'Unknown',
+  className: 'bg-muted text-muted-foreground',
+};
+
+export function getOrgUnitTypeBadgeConfig(type: string): TypeBadgeConfig {
+  return TYPE_BADGE_CONFIGS[type as OrgUnitTypeValue] ?? { ...DEFAULT_BADGE_CONFIG, label: type };
+}
+
+export function getOrgUnitTypeBadgeClassName(type: string): string {
+  return getOrgUnitTypeBadgeConfig(type).className;
 }

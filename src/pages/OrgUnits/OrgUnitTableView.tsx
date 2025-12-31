@@ -13,6 +13,7 @@ import {
 } from '@/components/common';
 import { MoreVertical, Edit, Trash2, Building2, User, Layers, Eye } from 'lucide-react';
 import type { OrgUnit } from '@/services/org_units/types';
+import { getOrgUnitTypeBadgeClassName } from '@/services/org_units/utils';
 
 interface OrgUnitTableViewProps {
   orgUnits: OrgUnit[];
@@ -32,7 +33,6 @@ const OrgUnitTableView: React.FC<OrgUnitTableViewProps> = ({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Kode</TableHead>
             <TableHead>Nama</TableHead>
             <TableHead>Tipe</TableHead>
             <TableHead>Parent Unit</TableHead>
@@ -45,18 +45,14 @@ const OrgUnitTableView: React.FC<OrgUnitTableViewProps> = ({
           {orgUnits.map((orgUnit) => (
             <TableRow key={orgUnit.id}>
               <TableCell className="font-medium">
-                {orgUnit.code}
-              </TableCell>
-
-              <TableCell className="font-medium">
                 {orgUnit.name}
               </TableCell>
 
               <TableCell>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Layers className="h-3.5 w-3.5" />
-                  <span className="capitalize">{orgUnit.type}</span>
-                </div>
+                <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${getOrgUnitTypeBadgeClassName(orgUnit.type)}`}>
+                  <Layers className="h-3 w-3" />
+                  {orgUnit.type}
+                </span>
               </TableCell>
 
               <TableCell>
@@ -82,11 +78,10 @@ const OrgUnitTableView: React.FC<OrgUnitTableViewProps> = ({
               </TableCell>
 
               <TableCell className="text-center">
-                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                  orgUnit.is_active
-                    ? 'bg-primary/10 text-primary'
-                    : 'bg-muted text-muted-foreground'
-                }`}>
+                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${orgUnit.is_active
+                  ? 'bg-primary/10 text-primary'
+                  : 'bg-muted text-muted-foreground'
+                  }`}>
                   {orgUnit.is_active ? 'Aktif' : 'Tidak Aktif'}
                 </span>
               </TableCell>
