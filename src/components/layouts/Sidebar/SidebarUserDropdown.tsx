@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import type { CurrentUser } from '@/stores/authStore';
@@ -46,6 +46,7 @@ const SidebarUserDropdown: React.FC<SidebarUserDropdownProps> = ({
             >
               <div className="flex items-center gap-3">
                 <Avatar className="h-8 w-8">
+                  <AvatarImage src={userData.avatar_url || undefined} alt={getUserFullName()} />
                   <AvatarFallback className="text-sm font-medium bg-primary text-secondary">
                     {getUserInitials()}
                   </AvatarFallback>
@@ -93,6 +94,7 @@ const SidebarUserDropdown: React.FC<SidebarUserDropdownProps> = ({
               className="flex items-center justify-center p-0 w-10 h-10 mx-auto rounded-full hover:bg-muted relative"
             >
               <Avatar className="h-8 w-8">
+                <AvatarImage src={userData.avatar_url || undefined} alt={getUserFullName()} />
                 <AvatarFallback className="text-sm font-medium bg-primary text-secondary">
                   {getUserInitials()}
                 </AvatarFallback>

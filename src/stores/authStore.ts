@@ -77,16 +77,31 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
                 set({ loading: true, error: null });
                 try {
+                    // Extract avatar_url from JWT token
+                    let avatarUrl: string | null = null;
+                    try {
+                        const payload = JSON.parse(atob(accessToken.split('.')[1]));
+                        avatarUrl = payload.avatar_url || null;
+                    } catch {
+                        // Ignore decode errors
+                    }
+
                     const { authService } = await import('@/services/auth/service');
                     const response = await authService.getCurrentUser();
-                    set({ userData: response.data, loading: false });
-                    return response.data;
+                    // Use avatar_url from JWT if not in response
+                    const userData = {
+                        ...response.data,
+                        avatar_url: response.data.avatar_url || avatarUrl,
+                    };
+                    set({ userData, loading: false });
+                    return userData;
                 } catch (error: any) {
                     const errorMessage = error.response?.data?.message || 'Failed to fetch user data';
                     set({ loading: false, error: errorMessage });
                     throw new Error(errorMessage);
                 }
             },
+
 
             refreshToken: async () => {
                 const { refreshTokenValue, deviceId } = get();
