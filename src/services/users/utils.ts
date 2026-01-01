@@ -118,7 +118,7 @@ export function isEmployeeOnly(user: CurrentUser | null): boolean {
 /**
  * Async function: Check if user has specific role (fetch dari backend)
  */
-export async function checkUserRole(userId: number, roleName: string): Promise<boolean> {
+export async function checkUserRole(userId: string, roleName: string): Promise<boolean> {
   try {
     const response = await usersService.getUserRolesAndPermissions(userId);
     return response.data.roles.includes(roleName);
@@ -131,7 +131,7 @@ export async function checkUserRole(userId: number, roleName: string): Promise<b
 /**
  * Async function: Check if user has specific permission (fetch dari backend)
  */
-export async function checkUserPermission(userId: number, permissionCode: string): Promise<boolean> {
+export async function checkUserPermission(userId: string, permissionCode: string): Promise<boolean> {
   try {
     const response = await usersService.getUserRolesAndPermissions(userId);
     return response.data.permissions.includes(permissionCode);
