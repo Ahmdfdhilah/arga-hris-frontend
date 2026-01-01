@@ -51,7 +51,7 @@ const AttendanceList: React.FC = () => {
 
   const { userData } = useAuthStore();
 
-  const canMarkPresent = hasPermission(userData, 'attendance.update');
+  const canMarkPresent = hasPermission(userData, 'attendance:update');
 
   const urlFiltersHook = useURLFilters<PaginationParams & AttendanceFilterParams>({
     defaults: {

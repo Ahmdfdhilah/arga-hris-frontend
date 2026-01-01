@@ -17,7 +17,8 @@ export interface LeaveRequest {
   total_days: number;
   reason: string;
   replacement?: ReplacementInfo;
-  created_by: number | null;
+  created_by: string | null;
+  updated_by: string | null;
   created_at: string;
   updated_at: string;
 }

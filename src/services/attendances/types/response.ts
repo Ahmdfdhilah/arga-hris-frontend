@@ -14,7 +14,8 @@ export interface Attendance {
   check_out_time: string | null;
   work_hours: number | null;
   overtime_hours: number | null;
-  created_by: number | null;
+  created_by: string | null;
+  updated_by: string | null;
   check_in_submitted_at: string | null;
   check_in_submitted_ip: string | null;
   check_in_notes: string | null;

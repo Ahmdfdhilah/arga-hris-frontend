@@ -14,7 +14,7 @@ export interface OrgUnit extends BaseEntity {
   employee_count: number;
   total_employee_count: number;
   deleted_at?: string | null;
-  deleted_by?: number | null;
+  deleted_by?: string | null;
   parent?: {
     id: number;
     code: string;
