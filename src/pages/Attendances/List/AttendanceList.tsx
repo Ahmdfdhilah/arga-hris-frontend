@@ -33,6 +33,7 @@ import Filtering from '@/components/common/Filtering';
 import { AttendanceCardView } from './AttendanceCardView';
 import { AttendanceTableView } from './AttendanceTableView';
 import { BulkMarkPresentDialog } from './BulkMarkPresentDialog';
+import MarkAsLeaveDialog from './MarkAsLeaveDialog';
 import { AttendanceDetailDialog } from '../AttendanceDetailDialog';
 import { useAttendances, useTeamAttendance, useMarkPresentById } from '@/hooks/tanstackHooks/useAttendances';
 import { useURLFilters } from '@/hooks/useURLFilters';
@@ -52,6 +53,7 @@ const AttendanceList: React.FC = () => {
   const { userData } = useAuthStore();
 
   const canMarkPresent = hasPermission(userData, 'attendance:update');
+  const canCreateLeaveRequest = hasPermission(userData, 'leave:write');
 
   const urlFiltersHook = useURLFilters<PaginationParams & AttendanceFilterParams>({
     defaults: {
@@ -97,6 +99,8 @@ const AttendanceList: React.FC = () => {
   const [bulkMarkPresentDialogOpen, setBulkMarkPresentDialogOpen] = useState(false);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [attendanceToView, setAttendanceToView] = useState<AttendanceListItem | null>(null);
+  const [markAsLeaveDialogOpen, setMarkAsLeaveDialogOpen] = useState(false);
+  const [attendanceForLeave, setAttendanceForLeave] = useState<AttendanceListItem | null>(null);
 
   // Mark present mutation
   const markPresentMutation = useMarkPresentById();
@@ -129,6 +133,11 @@ const AttendanceList: React.FC = () => {
 
   const handleClearFilters = () => {
     urlFiltersHook.resetFilters();
+  };
+
+  const handleMarkAsLeave = (attendance: AttendanceListItem) => {
+    setAttendanceForLeave(attendance);
+    setMarkAsLeaveDialogOpen(true);
   };
 
   const hasActiveFilters = urlFiltersHook.hasActiveFilters();
@@ -391,6 +400,7 @@ const AttendanceList: React.FC = () => {
                   attendances={data.data}
                   onView={handleViewAttendance}
                   onMarkPresent={canMarkPresent ? handleMarkPresent : undefined}
+                  onMarkAsLeave={canCreateLeaveRequest ? handleMarkAsLeave : undefined}
                   showUserInfo={true}
                 />
               ) : (
@@ -401,6 +411,7 @@ const AttendanceList: React.FC = () => {
                       attendance={attendance}
                       onView={handleViewAttendance}
                       onMarkPresent={canMarkPresent ? handleMarkPresent : undefined}
+                      onMarkAsLeave={canCreateLeaveRequest ? handleMarkAsLeave : undefined}
                       showUserInfo={true}
                     />
                   ))}
@@ -433,6 +444,12 @@ const AttendanceList: React.FC = () => {
         open={detailDialogOpen}
         onOpenChange={setDetailDialogOpen}
         attendance={attendanceToView}
+      />
+
+      <MarkAsLeaveDialog
+        open={markAsLeaveDialogOpen}
+        onOpenChange={setMarkAsLeaveDialogOpen}
+        attendance={attendanceForLeave}
       />
     </div>
   );

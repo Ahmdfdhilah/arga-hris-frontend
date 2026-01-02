@@ -1,4 +1,4 @@
-import { Calendar, Clock, Edit, MoreVertical, Trash2, User, Eye, CheckCircle } from 'lucide-react';
+import { Calendar, Clock, Edit, MoreVertical, Trash2, User, Eye, CheckCircle, FileText } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -28,6 +28,7 @@ interface AttendanceTableViewProps {
   onEdit?: (attendance: AttendanceListItem) => void;
   onDelete?: (attendance: AttendanceListItem) => void;
   onMarkPresent?: (attendance: AttendanceListItem) => void;
+  onMarkAsLeave?: (attendance: AttendanceListItem) => void;
   showUserInfo?: boolean;
 }
 
@@ -37,6 +38,7 @@ export const AttendanceTableView: React.FC<AttendanceTableViewProps> = ({
   onEdit,
   onDelete,
   onMarkPresent,
+  onMarkAsLeave,
   showUserInfo = true,
 }) => {
   return (
@@ -52,7 +54,7 @@ export const AttendanceTableView: React.FC<AttendanceTableViewProps> = ({
             <TableHead>Check Out</TableHead>
             <TableHead>Lokasi Check Out</TableHead>
             <TableHead>Jam Kerja</TableHead>
-            {(onView || onEdit || onDelete || onMarkPresent) && <TableHead className="w-[70px]"></TableHead>}
+            {(onView || onEdit || onDelete || onMarkPresent || onMarkAsLeave) && <TableHead className="w-[70px]"></TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -138,7 +140,7 @@ export const AttendanceTableView: React.FC<AttendanceTableViewProps> = ({
                 </div>
               </TableCell>
 
-              {(onView || onEdit || onDelete || onMarkPresent) && (
+              {(onView || onEdit || onDelete || onMarkPresent || onMarkAsLeave) && (
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -160,7 +162,14 @@ export const AttendanceTableView: React.FC<AttendanceTableViewProps> = ({
                           Tandai Hadir
                         </DropdownMenuItem>
                       )}
-                      {onMarkPresent && (onEdit || onDelete) && <DropdownMenuSeparator />}
+                      {onMarkPresent && (onEdit || onDelete || onMarkAsLeave) && <DropdownMenuSeparator />}
+                      {(onMarkAsLeave && attendance.status !== 'leave') && (
+                        <DropdownMenuItem onClick={() => onMarkAsLeave(attendance)}>
+                          <FileText className="mr-2 h-4 w-4" />
+                          Tandai sebagai Cuti
+                        </DropdownMenuItem>
+                      )}
+                      {onMarkAsLeave && (onEdit || onDelete) && <DropdownMenuSeparator />}
                       {onEdit && (
                         <DropdownMenuItem onClick={() => onEdit(attendance)}>
                           <Edit className="mr-2 h-4 w-4" />

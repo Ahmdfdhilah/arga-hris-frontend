@@ -1,4 +1,4 @@
-import { Calendar, Clock, Edit, MoreVertical, Trash2, User, Eye, CheckCircle } from 'lucide-react';
+import { Calendar, Clock, Edit, MoreVertical, Trash2, User, Eye, CheckCircle, FileText } from 'lucide-react';
 import {
   Item,
   ItemMedia,
@@ -28,6 +28,7 @@ interface AttendanceCardViewProps {
   onEdit?: (attendance: AttendanceListItem) => void;
   onDelete?: (attendance: AttendanceListItem) => void;
   onMarkPresent?: (attendance: AttendanceListItem) => void;
+  onMarkAsLeave?: (attendance: AttendanceListItem) => void;
   showUserInfo?: boolean;
 }
 
@@ -37,6 +38,7 @@ export const AttendanceCardView: React.FC<AttendanceCardViewProps> = ({
   onEdit,
   onDelete,
   onMarkPresent,
+  onMarkAsLeave,
   showUserInfo = true,
 }) => {
   return (
@@ -126,7 +128,7 @@ export const AttendanceCardView: React.FC<AttendanceCardViewProps> = ({
 
       </ItemContent>
 
-      {(onView || onEdit || onDelete || onMarkPresent) && (
+      {(onView || onEdit || onDelete || onMarkPresent || onMarkAsLeave) && (
         <ItemActions>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -148,7 +150,14 @@ export const AttendanceCardView: React.FC<AttendanceCardViewProps> = ({
                   Tandai Hadir
                 </DropdownMenuItem>
               )}
-              {onMarkPresent && (onEdit || onDelete) && <DropdownMenuSeparator />}
+              {onMarkPresent && (onEdit || onDelete || onMarkAsLeave) && <DropdownMenuSeparator />}
+              {(onMarkAsLeave && attendance.status !== 'leave') && (
+                <DropdownMenuItem onClick={() => onMarkAsLeave(attendance)}>
+                  <FileText className="mr-2 h-4 w-4" />
+                  Tandai sebagai Cuti
+                </DropdownMenuItem>
+              )}
+              {onMarkAsLeave && (onEdit || onDelete) && <DropdownMenuSeparator />}
               {onEdit && (
                 <DropdownMenuItem onClick={() => onEdit(attendance)}>
                   <Edit className="mr-2 h-4 w-4" />
