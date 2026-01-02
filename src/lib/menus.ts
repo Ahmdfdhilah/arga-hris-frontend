@@ -112,6 +112,13 @@ export const hrisMenus: MenuItem[] = [
         roles: ['super_admin'],
         requireAllRoles: true,
       },
+      {
+        title: 'Hari Libur',
+        path: '/holidays',
+        permissions: ['holiday:read'],
+        roles: ['super_admin'],
+        requireAllRoles: true,
+      },
     ],
   },
   {

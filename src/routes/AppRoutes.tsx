@@ -7,6 +7,7 @@ import { AttendancesRoutes } from './attendances';
 import { LeaveRequestsRoutes } from './leave-requests';
 import { ReportsRoutes } from './reports';
 import { AssignmentsRoutes } from './assignments';
+import { HolidaysRoutes } from './holidays';
 
 const AppRoutes = () => {
   return (
@@ -27,6 +28,9 @@ const AppRoutes = () => {
       {/* Leave Requests Management Routes */}
       {LeaveRequestsRoutes()}
 
+      {/* Holidays Management Routes */}
+      {HolidaysRoutes()}
+
       {/* Reports Management Routes */}
       {ReportsRoutes()}
 
@@ -42,3 +46,4 @@ const AppRoutes = () => {
 };
 
 export default AppRoutes;
+
