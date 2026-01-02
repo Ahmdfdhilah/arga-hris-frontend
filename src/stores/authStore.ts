@@ -145,6 +145,19 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         }),
         {
             name: 'arga-hris-auth',
+            version: 2,
+            migrate: (persistedState: any, version: number) => {
+                if (version < 2) {
+                    return {
+                        accessToken: null,
+                        refreshTokenValue: null,
+                        deviceId: null,
+                        userData: null,
+                        isAuthenticated: false,
+                    };
+                }
+                return persistedState;
+            },
             storage: createJSONStorage(() => localStorage),
             partialize: (state) => ({
                 accessToken: state.accessToken,
