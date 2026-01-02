@@ -77,22 +77,9 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
                 set({ loading: true, error: null });
                 try {
-                    // Extract avatar_url from JWT token
-                    let avatarUrl: string | null = null;
-                    try {
-                        const payload = JSON.parse(atob(accessToken.split('.')[1]));
-                        avatarUrl = payload.avatar_url || null;
-                    } catch {
-                        // Ignore decode errors
-                    }
-
                     const { authService } = await import('@/services/auth/service');
                     const response = await authService.getCurrentUser();
-                    // Use avatar_url from JWT if not in response
-                    const userData = {
-                        ...response.data,
-                        avatar_url: response.data.avatar_url || avatarUrl,
-                    };
+                    const userData = response.data;
                     set({ userData, loading: false });
                     return userData;
                 } catch (error: any) {
