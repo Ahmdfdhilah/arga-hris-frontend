@@ -50,9 +50,9 @@ export const AttendanceTableView: React.FC<AttendanceTableViewProps> = ({
             <TableHead>Tanggal</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Check In</TableHead>
-            <TableHead>Lokasi Check In</TableHead>
+            <TableHead className="w-[250px] min-w-[250px]">Lokasi Check In</TableHead>
             <TableHead>Check Out</TableHead>
-            <TableHead>Lokasi Check Out</TableHead>
+            <TableHead className="w-[250px] min-w-[250px]">Lokasi Check Out</TableHead>
             <TableHead>Jam Kerja</TableHead>
             {(onView || onEdit || onDelete || onMarkPresent || onMarkAsLeave) && <TableHead className="w-[70px]"></TableHead>}
           </TableRow>
