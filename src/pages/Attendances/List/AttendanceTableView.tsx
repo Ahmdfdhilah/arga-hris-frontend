@@ -43,16 +43,16 @@ export const AttendanceTableView: React.FC<AttendanceTableViewProps> = ({
 }) => {
   return (
     <div className="rounded-md border">
-      <Table className="table-fixed">
+      <Table>
         <TableHeader>
           <TableRow>
             {showUserInfo && <TableHead>Employee</TableHead>}
             <TableHead>Tanggal</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Check In</TableHead>
-            <TableHead className="w-[200px]">Lokasi Check In</TableHead>
+            <TableHead>Lokasi Check In</TableHead>
             <TableHead>Check Out</TableHead>
-            <TableHead className="w-[200px]">Lokasi Check Out</TableHead>
+            <TableHead>Lokasi Check Out</TableHead>
             <TableHead>Jam Kerja</TableHead>
             {(onView || onEdit || onDelete || onMarkPresent || onMarkAsLeave) && <TableHead className="w-[70px]"></TableHead>}
           </TableRow>
@@ -110,8 +110,8 @@ export const AttendanceTableView: React.FC<AttendanceTableViewProps> = ({
                 )}
               </TableCell>
 
-              <TableCell>
-                <div className="text-sm text-muted-foreground break-words">
+              <TableCell className="whitespace-normal max-w-[200px]">
+                <div className="text-sm text-muted-foreground">
                   {attendance.check_in_location_name || '-'}
                 </div>
               </TableCell>
@@ -128,8 +128,8 @@ export const AttendanceTableView: React.FC<AttendanceTableViewProps> = ({
                 )}
               </TableCell>
 
-              <TableCell>
-                <div className="text-sm text-muted-foreground break-words">
+              <TableCell className="whitespace-normal max-w-[200px]">
+                <div className="text-sm text-muted-foreground">
                   {attendance.check_out_location_name || '-'}
                 </div>
               </TableCell>
